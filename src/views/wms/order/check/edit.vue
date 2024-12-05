@@ -1,16 +1,16 @@
 <template>
   <div v-if="!checking" style="display: flex;justify-content: center;align-items: center;height: 80vh">
-    <el-card header="选择仓库后开始盘库" >
+    <el-card header="选择仓库后开始盘库">
       <el-form>
         <el-form-item label="仓库" prop="warehouseId">
-          <el-select v-model="form.warehouseId" placeholder="请选择仓库" :disabled="checking"
-                     filterable>
+          <el-select v-model="form.warehouseId" placeholder="请选择仓库" :disabled="checking" filterable>
             <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
-                       :value="item.id"/>
+              :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" plain="plain" size="default" @click="startCheck"  style="width: 100%!important;">开始盘库</el-button>
+          <el-button type="primary" plain="plain" size="default" @click="startCheck"
+            style="width: 100%!important;">开始盘库</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -22,16 +22,14 @@
           <el-row :gutter="24">
             <el-col :span="11">
               <el-form-item label="盘库单号" prop="orderNo">
-                <el-input class="w200" v-model="form.orderNo" placeholder="盘库单号"
-                          :disabled="form.id"></el-input>
+                <el-input class="w200" v-model="form.orderNo" placeholder="盘库单号" :disabled="form.id"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="仓库" prop="warehouseId">
-                <el-select v-model="form.warehouseId" placeholder="请选择仓库" :disabled="checking"
-                           filterable>
+                <el-select v-model="form.warehouseId" placeholder="请选择仓库" :disabled="checking" filterable>
                   <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
-                             :value="item.id"/>
+                    :value="item.id" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -39,20 +37,14 @@
           <el-row :gutter="24">
             <el-col :span="11">
               <el-form-item label="备注" prop="remark">
-                <el-input
-                  v-model="form.remark"
-                  placeholder="备注...100个字符以内"
-                  rows="4"
-                  maxlength="100"
-                  type="textarea"
-                  show-word-limit="show-word-limit"
-                ></el-input>
+                <el-input v-model="form.remark" placeholder="备注...100个字符以内" rows="4" maxlength="100" type="textarea"
+                  show-word-limit="show-word-limit"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="盈亏数" prop="totalQuantity">
                 <el-input-number v-model="form.totalQuantity" :controls="false" :precision="0"
-                                 :disabled="true"></el-input-number>
+                  :disabled="true"></el-input-number>
               </el-form-item>
             </el-col>
           </el-row>
@@ -61,39 +53,27 @@
       <el-card header="商品明细" class="mt10">
         <div class="receipt-order-content">
           <div class="flex-space-between mb8">
-            <div>
-              <span>审批 | 一物一码：</span>
-              <el-switch
-                :before-change="goSaasTip"
-                class="mr10 ml10"
-                inline-prompt
-                size="large"
-                :active-value="true"
-                :inactive-value="false"
-                active-text="开启"
-                inactive-text="关闭"
-              />
-            </div>
-                  <el-button type="primary" plain="plain" size="default" @click="showSkuSelect" icon="Plus"
-                             :disabled="!form.warehouseId">新增库存
-                  </el-button>
+            <el-button type="primary" plain="plain" size="default" @click="showSkuSelect" icon="Plus"
+              :disabled="!form.warehouseId">新增库存
+            </el-button>
           </div>
           <el-table :data="form.details" border empty-text="暂无商品明细">
             <el-table-column label="商品信息" prop="itemSku.itemName">
               <template #default="scope">
-                  <div>{{
-                      scope.row.item.itemName + (scope.row.item.itemCode ? ('(' + scope.row.item.itemCode + ')') : '')
-                    }}
-                  </div>
-                  <div v-if="scope.row.item.itemBrand">
-                    品牌：{{ useWmsStore().itemBrandMap.get(scope.row.item.itemBrand).brandName }}
-                  </div>
-                </template>
+                <div>{{
+                  scope.row.item.itemName + (scope.row.item.itemCode ? ('(' + scope.row.item.itemCode + ')') : '')
+                }}
+                </div>
+                <div v-if="scope.row.item.itemBrand">
+                  品牌：{{ useWmsStore().itemBrandMap.get(scope.row.item.itemBrand).brandName }}
+                </div>
+              </template>
             </el-table-column>
             <el-table-column label="规格信息">
               <template #default="{ row }">
                 <template v-if="row.newInventoryDetail">
-                  <div v-if="row.itemSku">{{ row.itemSku.skuName + (row.itemSku.barcode ? ('(' + row.itemSku.barcode + ')') : '') }}</div>
+                  <div v-if="row.itemSku">{{ row.itemSku.skuName + (row.itemSku.barcode ? ('(' + row.itemSku.barcode +
+                    ')') : '') }}</div>
                   <div v-else>请选择商品</div>
                 </template>
                 <template v-else>
@@ -103,29 +83,24 @@
             </el-table-column>
             <el-table-column label="账面库存" align="right" width="150">
               <template #default="{ row }">
-                <el-statistic :value="Number(row.quantity)" :precision="0"/>
+                <el-statistic :value="Number(row.quantity)" :precision="0" />
               </template>
             </el-table-column>
             <el-table-column label="盈亏数" prop="remainQuantity" align="right" width="150">
               <template #default="{ row }">
-                <el-statistic :value="Number(row.checkQuantity) - Number(row.quantity)" :precision="0"/>
+                <el-statistic :value="Number(row.checkQuantity) - Number(row.quantity)" :precision="0" />
               </template>
             </el-table-column>
             <el-table-column label="实际库存" prop="checkQuantity" width="180">
               <template #default="scope">
-                <el-input-number
-                  v-model="scope.row.checkQuantity"
-                  placeholder="实际库存"
-                  :min="0"
-                  :precision="0"
-                  @change="handleChangeQuantity"
-                ></el-input-number>
+                <el-input-number v-model="scope.row.checkQuantity" placeholder="实际库存" :min="0" :precision="0"
+                  @change="handleChangeQuantity"></el-input-number>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="100" align="center">
               <template #default="scope">
                 <el-button icon="Delete" type="danger" plain size="small" v-if="scope.row.newInventory"
-                           @click="handleDeleteDetail(scope.row, scope.$index)" link>删除
+                  @click="handleDeleteDetail(scope.row, scope.$index)" link>删除
                 </el-button>
                 <div v-else> - </div>
               </template>
@@ -133,14 +108,8 @@
           </el-table>
         </div>
       </el-card>
-      <SkuSelect
-        ref="skuSelectRef"
-        :model-value="skuSelectShow"
-        :selected-sku="selectedSku"
-        @handleOkClick="handleOkClick"
-        @handleCancelClick="skuSelectShow = false"
-        :size="'80%'"
-      />
+      <SkuSelect ref="skuSelectRef" :model-value="skuSelectShow" :selected-sku="selectedSku"
+        @handleOkClick="handleOkClick" @handleCancelClick="skuSelectShow = false" :size="'80%'" />
     </div>
     <div class="footer-global" v-if="checking">
       <div class="btn-box">
@@ -158,19 +127,19 @@
 </template>
 
 <script setup name="CheckOrderEdit">
-import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
+import { computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch } from "vue";
 const skuSelectRef = ref(null)
-import {addCheckOrder, getCheckOrder, updateCheckOrder, check} from "@/api/wms/checkOrder";
-import {delCheckOrderDetail} from "@/api/wms/checkOrderDetail";
-import {listInventoryNoPage} from "@/api/wms/inventory";
-import {ElMessage, ElMessageBox} from "element-plus";
-import {useRoute} from "vue-router";
-import {useWmsStore} from '@/store/modules/wms'
-import {numSub, generateNo} from '@/utils/ruoyi'
+import { addCheckOrder, getCheckOrder, updateCheckOrder, check } from "@/api/wms/checkOrder";
+import { delCheckOrderDetail } from "@/api/wms/checkOrderDetail";
+import { listInventoryNoPage } from "@/api/wms/inventory";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { useRoute } from "vue-router";
+import { useWmsStore } from '@/store/modules/wms'
+import { numSub, generateNo } from '@/utils/ruoyi'
 import SkuSelect from "@/views/components/SkuSelect.vue";
 
-const {proxy} = getCurrentInstance();
-const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
+const { proxy } = getCurrentInstance();
+const { wms_shipment_type } = proxy.useDict("wms_shipment_type");
 const loading = ref(false)
 const selectedSku = ref([])
 const initFormData = {
@@ -183,23 +152,23 @@ const initFormData = {
   details: [],
 }
 const data = reactive({
-  form: {...initFormData},
+  form: { ...initFormData },
   rules: {
     orderNo: [
-      {required: true, message: "盘库单号不能为空", trigger: "blur"}
+      { required: true, message: "盘库单号不能为空", trigger: "blur" }
     ],
     warehouseId: [
-      {required: true, message: "请选择仓库", trigger: ['blur', 'change']}
+      { required: true, message: "请选择仓库", trigger: ['blur', 'change'] }
     ],
   }
 });
-const {form, rules} = toRefs(data);
+const { form, rules } = toRefs(data);
 const cancel = async () => {
   await proxy?.$modal.confirm('确认取消编辑盘库单吗？');
   close()
 }
 const close = () => {
-  const obj = {path: "/checkOrder"};
+  const obj = { path: "/checkOrder" };
   proxy?.$tab.closeOpenPage(obj);
 }
 const inventorySelectShow = ref(false)
@@ -225,17 +194,17 @@ const startCheck = () => {
       }
     })
     res.data.forEach(it => {
-        form.value.details.push({
-            itemSku: it.itemSku,
-            item: it.item,
-            inventoryId: it.id,
-            skuId: it.itemSku.id,
-            warehouseId: it.warehouseId,
-            quantity: Number(it.quantity),
-            checkQuantity: Number(it.quantity),
-            newInventory: false
-          }
-        )
+      form.value.details.push({
+        itemSku: it.itemSku,
+        item: it.item,
+        inventoryId: it.id,
+        skuId: it.itemSku.id,
+        warehouseId: it.warehouseId,
+        quantity: Number(it.quantity),
+        checkQuantity: Number(it.quantity),
+        newInventory: false
+      }
+      )
     })
   }).finally(() => loading.value = false)
 }
@@ -289,7 +258,7 @@ const getParams = (orderStatus) => {
       }
     })
   }
-  return  {
+  return {
     id: form.value.id,
     orderNo: form.value.orderNo,
     orderStatus,
@@ -388,7 +357,7 @@ const loadDetail = (id) => {
         }
       })
     }
-    form.value = {...response.data}
+    form.value = { ...response.data }
     Promise.resolve();
   }).then(() => {
   }).finally(() => {
@@ -407,7 +376,7 @@ const handleDeleteDetail = (row, index) => {
   } else {
     form.value.details.splice(index, 1)
   }
-  const indexOfSelected = selectedSku.value.findIndex(it => row.itemSku.id=== it.id)
+  const indexOfSelected = selectedSku.value.findIndex(it => row.itemSku.id === it.id)
   selectedSku.value.splice(indexOfSelected, 1)
 }
 
@@ -444,14 +413,20 @@ const goSaasTip = () => {
 .el-statistic__content {
   font-size: 14px;
 }
+
 .hover-text {
-  color: black; /* 初始文字颜色 */
-  text-decoration: none; /* 初始没有下划线 */
-  transition: color 0.3s, text-decoration 0.3s; /* 平滑过渡效果 */
+  color: black;
+  /* 初始文字颜色 */
+  text-decoration: none;
+  /* 初始没有下划线 */
+  transition: color 0.3s, text-decoration 0.3s;
+  /* 平滑过渡效果 */
 }
 
 .hover-text:hover {
-  color: #409EFF; /* 鼠标移上去时文字颜色变为蓝色 */
-  text-decoration: underline; /* 鼠标移上去时带有下划线 */
+  color: #409EFF;
+  /* 鼠标移上去时文字颜色变为蓝色 */
+  text-decoration: underline;
+  /* 鼠标移上去时带有下划线 */
 }
 </style>
