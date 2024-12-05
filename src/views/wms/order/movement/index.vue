@@ -4,34 +4,24 @@
       <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="98px">
         <el-form-item label="移库状态" prop="movementOrderStatus">
           <el-radio-group v-model="queryParams.movementOrderStatus" @change="handleQuery">
-            <el-radio-button
-              :key="-2"
-              :label="-2"
-            >
+            <el-radio-button :key="-2" :label="-2">
               全部
             </el-radio-button>
-            <el-radio-button
-              v-for="item in wms_movement_status"
-              :key="item.value"
-              :label="item.value"
-            >
+            <el-radio-button v-for="item in wms_movement_status" :key="item.value" :label="item.value">
               {{ item.label }}
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="移库单号" prop="movementOrderNo">
-          <el-input
-            v-model="queryParams.movementOrderNo"
-            placeholder="请输入移库单号"
-            clearable
-            @keyup.enter="handleQuery"
-          />
+          <el-input v-model="queryParams.movementOrderNo" placeholder="请输入移库单号" clearable @keyup.enter="handleQuery" />
         </el-form-item>
         <el-form-item label="源仓库库区">
-          <WarehouseCascader v-model:value="queryParams.sourcePlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
+          <WarehouseCascader v-model:value="queryParams.sourcePlace" :show-all-levels="true" size="default"
+            @keyup.enter="handleQuery"></WarehouseCascader>
         </el-form-item>
         <el-form-item label="目标仓库库区">
-          <WarehouseCascader v-model:value="queryParams.targetPlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
+          <WarehouseCascader v-model:value="queryParams.targetPlace" :show-all-levels="true" size="default"
+            @keyup.enter="handleQuery"></WarehouseCascader>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -45,23 +35,13 @@
       <el-row :gutter="10" class="mb8" type="flex" justify="space-between">
         <el-col :span="6"><span style="font-size: large">移库单</span></el-col>
         <el-col :span="1.5">
-          <el-button
-            type="primary"
-            plain
-            icon="Plus"
-            @click="handleAdd"
-            v-hasPermi="['wms:movement:all']"
-          >新增</el-button>
+          <el-button type="primary" plain icon="Plus" @click="handleAdd"
+            v-hasPermi="['wms:movement:all']">新增</el-button>
         </el-col>
       </el-row>
 
-      <el-table v-loading="loading" :data="movementOrderList" border class="mt20"
-                @expand-change="handleExpandExchange"
-                :row-key="getRowKey"
-                :expand-row-keys="expandedRowKeys"
-                empty-text="暂无移库单"
-                cell-class-name="vertical-top-cell"
-      >
+      <el-table v-loading="loading" :data="movementOrderList" border class="mt20" @expand-change="handleExpandExchange"
+        :row-key="getRowKey" :expand-row-keys="expandedRowKeys" empty-text="暂无移库单" cell-class-name="vertical-top-cell">
         <el-table-column type="expand">
           <template #default="props">
             <div style="padding: 0 50px 20px 50px">
@@ -77,11 +57,21 @@
                     <div>{{ row?.itemSku?.skuName }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column label="源库区" prop="sourceAreaName"/>
-                <el-table-column label="目标库区" prop="targetAreaName"/>
+                <el-table-column label="源库区" prop="sourceAreaName" />
+                <el-table-column label="目标库区" prop="targetAreaName" />
                 <el-table-column label="数量" prop="quantity" align="right">
                   <template #default="{ row }">
-                    <el-statistic :value="Number(row.quantity)" :precision="0"/>
+                    <el-statistic :value="Number(row.quantity)" :precision="0" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="毛重(kg)" prop="grossWeight" align="right">
+                  <template #default="{ row }">
+                    <el-statistic :value="Number(row.grossWeight)" :precision="0" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="净重(kg)" prop="netWeight" align="right">
+                  <template #default="{ row }">
+                    <el-statistic :value="Number(row.netWeight)" :precision="0" />
                   </template>
                 </el-table-column>
                 <el-table-column label="批号" prop="batchNo" />
@@ -117,15 +107,23 @@
             <dict-tag :options="wms_movement_status" :value="row.movementOrderStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="数量" align="left">
+        <el-table-column label="数量" align="left" width="150">
           <template #default="{ row }">
             <div class="flex-space-between">
               <span>数量：</span>
-              <el-statistic :value="Number(row.totalQuantity)" :precision="0"/>
+              <el-statistic :value="Number(row.totalQuantity)" :precision="0" />
+            </div>
+            <div class="flex-space-between">
+              <span>毛重(kg)：</span>
+              <el-statistic :value="Number(row.totalGrossWeight)" :precision="0" />
+            </div>
+            <div class="flex-space-between">
+              <span>净重(kg)：</span>
+              <el-statistic :value="Number(row.totalNetWeight)" :precision="0" />
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="创建/操作" align="left">
+        <el-table-column label="创建/操作" align="left" width="110">
           <template #default="{ row }">
             <div>创建：{{ row.createBy }}</div>
             <div v-if="row.updateBy">操作：{{ row.updateBy }}</div>
@@ -133,6 +131,7 @@
         </el-table-column>
         <el-table-column label="创建时间/操作时间" align="left" width="200">
           <template #default="{ row }">
+            <div>移库：{{ parseTime(row.time, '{mm}-{dd} {hh}:{ii}') }}</div>
             <div>创建：{{ parseTime(row.createTime, '{mm}-{dd} {hh}:{ii}') }}</div>
             <div>操作：{{ parseTime(row.updateTime, '{mm}-{dd} {hh}:{ii}') }}</div>
           </template>
@@ -141,58 +140,47 @@
         <el-table-column label="操作" align="right" class-name="small-padding fixed-width" width="120">
           <template #default="scope">
             <div>
-              <el-popover
-                placement="left"
-                title="提示"
-                :width="300"
-                trigger="hover"
+              <el-popover placement="left" title="提示" :width="300" trigger="hover"
                 :disabled="scope.row.movementOrderStatus === 0"
-                :content="'移库单【' + scope.row.movementOrderNo + '】已' + (scope.row.movementOrderStatus === 1 ? '移库' : '作废') + '，无法修改！' "
-              >
+                :content="'移库单【' + scope.row.movementOrderNo + '】已' + (scope.row.movementOrderStatus === 1 ? '移库' : '作废') + '，无法修改！'">
                 <template #reference>
-                  <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['wms:movement:all']" :disabled="[-1, 1].includes(scope.row.movementOrderStatus)">修改</el-button>
+                  <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['wms:movement:all']"
+                    :disabled="[-1, 1].includes(scope.row.movementOrderStatus)">修改</el-button>
                 </template>
               </el-popover>
-              <el-button link type="primary" @click="handleGoDetail(scope.row)" v-hasPermi="['wms:movement:all']">{{ expandedRowKeys.includes(scope.row.id) ? '收起' : '查看' }}</el-button>
+              <el-button link type="primary" @click="handleGoDetail(scope.row)" v-hasPermi="['wms:movement:all']">{{
+                expandedRowKeys.includes(scope.row.id) ? '收起' : '查看' }}</el-button>
             </div>
             <div class="mt10">
-              <el-popover
-                placement="left"
-                title="提示"
-                :width="300"
-                trigger="hover"
+              <el-popover placement="left" title="提示" :width="300" trigger="hover"
                 :disabled="[-1, 0].includes(scope.row.movementOrderStatus)"
-                :content="'移库单【' + scope.row.movementOrderNo + '】已移库，无法删除！' "
-              >
+                :content="'移库单【' + scope.row.movementOrderNo + '】已移库，无法删除！'">
                 <template #reference>
-                  <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:movement:all']" :disabled="scope.row.movementOrderStatus === 1">删除</el-button>
+                  <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:movement:all']"
+                    :disabled="scope.row.movementOrderStatus === 1">删除</el-button>
                 </template>
               </el-popover>
-              <el-button link type="primary" @click="handlePrint(scope.row)" v-hasPermi="['wms:movement:all']">打印</el-button>
+              <el-button link type="primary" @click="handlePrint(scope.row)"
+                v-hasPermi="['wms:movement:all']">打印</el-button>
             </div>
           </template>
         </el-table-column>
       </el-table>
 
       <el-row>
-        <pagination
-          v-show="total>0"
-          :total="total"
-          v-model:page="queryParams.pageNum"
-          v-model:limit="queryParams.pageSize"
-          @pagination="getList"
-        />
+        <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+          v-model:limit="queryParams.pageSize" @pagination="getList" />
       </el-row>
     </el-card>
   </div>
 </template>
 
 <script setup name="MovementOrder">
-import {listMovementOrder, delMovementOrder, getMovementOrder} from "@/api/wms/movementOrder";
-import {listByMovementOrderId} from "@/api/wms/movementOrderDetail";
-import {getCurrentInstance, reactive, ref, toRefs} from "vue";
-import {useWmsStore} from "../../../../store/modules/wms";
-import {ElMessageBox} from "element-plus";
+import { listMovementOrder, delMovementOrder, getMovementOrder } from "@/api/wms/movementOrder";
+import { listByMovementOrderId } from "@/api/wms/movementOrderDetail";
+import { getCurrentInstance, reactive, ref, toRefs } from "vue";
+import { useWmsStore } from "../../../../store/modules/wms";
+import { ElMessageBox } from "element-plus";
 import WarehouseCascader from "@/views/components/WarehouseCascader.vue";
 import movementPanel from "@/components/PrintTemplate/movement-panel";
 
@@ -223,7 +211,7 @@ const { queryParams } = toRefs(data);
 /** 查询入库单列表 */
 function getList() {
   loading.value = true;
-  const query = {...queryParams.value}
+  const query = { ...queryParams.value }
   if (query.movementOrderStatus === -2) {
     query.movementOrderStatus = null
   }
@@ -266,7 +254,7 @@ function handleAdd() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('确认删除移库单【' + row.movementOrderNo + '】吗？').then(function() {
+  proxy.$modal.confirm('确认删除移库单【' + row.movementOrderNo + '】吗？').then(function () {
     loading.value = true;
     return delMovementOrder(_ids);
   }).then(() => {
@@ -289,7 +277,7 @@ function handleDelete(row) {
 }
 
 function handleUpdate(row) {
-  proxy.$router.push({ path: "/movementOrderEdit",  query: { id: row.id } });
+  proxy.$router.push({ path: "/movementOrderEdit", query: { id: row.id } });
 }
 
 function handleGoDetail(row) {
@@ -317,6 +305,8 @@ async function handlePrint(row) {
         sourceAreaName: useWmsStore().areaMap.get(detail.sourceAreaId)?.areaName,
         targetAreaName: useWmsStore().areaMap.get(detail.targetAreaId)?.areaName,
         quantity: Number(detail.quantity).toFixed(0),
+        grossWeight: Number(detail.grossWeight).toFixed(2),
+        netWeight: Number(detail.netWeight).toFixed(2),
         batchNo: detail.batchNo,
         productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
         expirationDate: proxy.parseTime(detail.expirationDate, '{y}-{m}-{d}')
@@ -331,14 +321,17 @@ async function handlePrint(row) {
     targetWarehouseName: useWmsStore().warehouseMap.get(movementOrder.targetWarehouseId)?.warehouseName,
     targetAreaName: useWmsStore().areaMap.get(movementOrder.targetAreaId)?.areaName,
     totalQuantity: Number(movementOrder.totalQuantity).toFixed(0),
+    totalGrossWeight: Number(movementOrder.totalGrossWeight).toFixed(2),
+    totalNetWeight: Number(movementOrder.totalNetWeight).toFixed(2),
     createBy: movementOrder.createBy,
     createTime: proxy.parseTime(movementOrder.createTime, '{mm}-{dd} {hh}:{ii}'),
     updateBy: movementOrder.updateBy,
     updateTime: proxy.parseTime(movementOrder.updateTime, '{mm}-{dd} {hh}:{ii}'),
     remark: movementOrder.remark,
-    table
+    table,
+    time: proxy.parseTime(movementOrder.time, '{mm}-{dd} {hh}:{ii}')
   }
-  let printTemplate = new proxy.$hiprint.PrintTemplate({template: movementPanel})
+  let printTemplate = new proxy.$hiprint.PrintTemplate({ template: movementPanel })
   printTemplate.print(printData, {}, {
     styleHandler: () => {
       let css = '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">';
@@ -395,6 +388,7 @@ getList();
 .el-statistic__content {
   font-size: 14px;
 }
+
 .el-table .vertical-top-cell {
   vertical-align: top
 }

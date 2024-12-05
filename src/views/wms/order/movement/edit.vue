@@ -4,27 +4,33 @@
       <el-card header="移库单基本信息">
         <el-form label-width="108px" :model="form" ref="movementForm" :rules="rules">
           <el-row :gutter="24">
-            <el-col :span="11">
+            <el-col :span="5">
               <el-form-item label="移库单号" prop="movementOrderNo">
-                <el-input class="w200" v-model="form.movementOrderNo" placeholder="移库单号"
-                          :disabled="form.id"></el-input>
+                <el-input class="w200" v-model="form.movementOrderNo" placeholder="移库单号" :disabled="form.id"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="移库时间" prop="time">
+                <el-date-picker v-model="form.time" type="date" format="YYYY-MM-DD HH:mm:ss"
+                  value-format="YYYY-MM-DD HH:mm:ss" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="源仓库" prop="sourceWarehouseId">
                 <el-select v-model="form.sourceWarehouseId" placeholder="请选择源仓库" @change="handleChangeSourceWarehouse"
-                           filterable>
+                  filterable>
                   <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
-                             :value="item.id"/>
+                    :value="item.id" />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="源库区" prop="sourceAreaId">
-                <el-select v-model="form.sourceAreaId" placeholder="请选择源库区" :disabled="!form.sourceWarehouseId" clearable
-                           filterable @change="handleChangeSourceArea" style="width: 100%!important;">
-                  <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.sourceWarehouseId)"
-                             :key="item.id" :label="item.areaName" :value="item.id"/>
+                <el-select v-model="form.sourceAreaId" placeholder="请选择源库区" :disabled="!form.sourceWarehouseId"
+                  clearable filterable @change="handleChangeSourceArea" style="width: 100%!important;">
+                  <el-option
+                    v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.sourceWarehouseId)"
+                    :key="item.id" :label="item.areaName" :value="item.id" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -32,35 +38,30 @@
           <el-row :gutter="24">
             <el-col :span="11">
               <el-form-item label="备注" prop="remark">
-                <el-input
-                  v-model="form.remark"
-                  placeholder="备注...100个字符以内"
-                  rows="4"
-                  maxlength="100"
-                  type="textarea"
-                  show-word-limit="show-word-limit"
-                ></el-input>
+                <el-input v-model="form.remark" placeholder="备注...100个字符以内" rows="4" maxlength="100" type="textarea"
+                  show-word-limit="show-word-limit"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="目标仓库" prop="targetWarehouseId">
                 <el-select v-model="form.targetWarehouseId" placeholder="请选择目标仓库" @change="handleChangeTargetWarehouse"
-                           filterable>
+                  filterable>
                   <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
-                             :value="item.id"/>
+                    :value="item.id" />
                 </el-select>
               </el-form-item>
               <el-form-item label="数量" prop="totalQuantity">
                 <el-input-number v-model="form.totalQuantity" :controls="false" :precision="0"
-                                 :disabled="true"></el-input-number>
+                  :disabled="true"></el-input-number>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="目标库区" prop="targetAreaId">
-                <el-select v-model="form.targetAreaId" placeholder="请选择目标库区" :disabled="!form.targetWarehouseId" clearable
-                           filterable @change="handleChangeTargetArea" style="width: 100%!important;">
-                  <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.targetWarehouseId)"
-                             :key="item.id" :label="item.areaName" :value="item.id"/>
+                <el-select v-model="form.targetAreaId" placeholder="请选择目标库区" :disabled="!form.targetWarehouseId"
+                  clearable filterable @change="handleChangeTargetArea" style="width: 100%!important;">
+                  <el-option
+                    v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.targetWarehouseId)"
+                    :key="item.id" :label="item.areaName" :value="item.id" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -70,31 +71,11 @@
       <el-card header="商品明细" class="mt10">
         <div class="receipt-order-content">
           <div class="flex-space-between mb8">
-            <div>
-              <span>一物一码/SN模式：</span>
-              <el-switch
-                :before-change="goSaasTip"
-                class="mr10 ml10"
-                inline-prompt
-                size="large"
-                v-model="mode"
-                :active-value="true"
-                :inactive-value="false"
-                active-text="开启"
-                inactive-text="关闭"
-              />
-            </div>
-            <el-popover
-              placement="left"
-              title="提示"
-              :width="200"
-              trigger="hover"
-              :disabled="form.sourceWarehouseId && form.targetWarehouseId"
-              content="请先选择源仓库和目标仓库！"
-            >
+            <el-popover placement="left" title="提示" :width="200" trigger="hover"
+              :disabled="form.sourceWarehouseId && form.targetWarehouseId" content="请先选择源仓库和目标仓库！">
               <template #reference>
                 <el-button type="primary" plain="plain" size="default" @click="showAddItem" icon="Plus"
-                           :disabled="!form.sourceWarehouseId || !form.targetWarehouseId">添加商品
+                  :disabled="!form.sourceWarehouseId || !form.targetWarehouseId">添加商品
                 </el-button>
               </template>
             </el-popover>
@@ -103,8 +84,8 @@
             <el-table-column label="商品信息" prop="itemSku.itemName">
               <template #default="{ row }">
                 <div>{{
-                    row.itemSku.item.itemName + (row.itemSku.item.itemCode ? ('(' + row.itemSku.item.itemCode + ')') : '')
-                  }}
+                  row.itemSku.item.itemName + (row.itemSku.item.itemCode ? ('(' + row.itemSku.item.itemCode + ')') : '')
+                }}
                 </div>
                 <div v-if="row.itemSku.item.itemBrand">
                   品牌：{{ useWmsStore().itemBrandMap.get(row.itemSku.item.itemBrand).brandName }}
@@ -113,7 +94,7 @@
             </el-table-column>
             <el-table-column label="规格信息">
               <template #default="{ row }">
-                <div>{{ row.itemSku.skuName}}</div>
+                <div>{{ row.itemSku.skuName }}</div>
                 <div v-if="row.itemSku.barcode">条码：{{ row.itemSku.barcode }}</div>
               </template>
             </el-table-column>
@@ -121,8 +102,9 @@
             <el-table-column label="目标库区" width="200">
               <template #default="{ row }">
                 <el-select v-model="row.targetAreaId" placeholder="请选择目标库区" filterable :disabled="!!form.targetAreaId">
-                  <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.targetWarehouseId)"
-                             :key="item.id" :label="item.areaName" :value="item.id"/>
+                  <el-option
+                    v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.targetWarehouseId)"
+                    :key="item.id" :label="item.areaName" :value="item.id" />
                 </el-select>
               </template>
             </el-table-column>
@@ -139,43 +121,35 @@
             </el-table-column>
             <el-table-column label="剩余库存" prop="remainQuantity" align="right" width="150">
               <template #default="{ row }">
-                <el-statistic :value="Number(row.remainQuantity)" :precision="0"/>
+                <el-statistic :value="Number(row.remainQuantity)" :precision="0" />
               </template>
             </el-table-column>
             <el-table-column label="移库数量" prop="quantity" width="180">
               <template #default="scope">
-                <el-input-number
-                  v-model="scope.row.quantity"
-                  placeholder="移库数量"
-                  :min="1"
-                  :precision="0"
-                  :max="scope.row.remainQuantity"
-                  @change="handleChangeQuantity"
-                ></el-input-number>
+                <el-input-number v-model="scope.row.quantity" placeholder="移库数量" :min="1" :precision="0"
+                  :max="scope.row.remainQuantity" @change="handleChangeQuantity"></el-input-number>
+              </template>
+            </el-table-column>
+            <el-table-column label="重量">
+              <template #default="{ row }">
+                <div>毛重(kg)：{{ row.grossWeight }}</div>
+                <div>净重(kg)：{{ row.netWeight }}</div>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="100" align="right" fixed="right">
               <template #default="scope">
                 <el-button icon="Delete" type="danger" plain size="small"
-                           @click="handleDeleteDetail(scope.row, scope.$index)" link>删除
+                  @click="handleDeleteDetail(scope.row, scope.$index)" link>删除
                 </el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
       </el-card>
-      <InventoryDetailSelect
-        ref="inventorySelectRef"
-        :model-value="inventorySelectShow"
-        @handleOkClick="handleOkClick"
-        @handleCancelClick="inventorySelectShow = false"
-        :size="'90%'"
-        :select-warehouse-disable="false"
-        :select-area-disable="!!form?.sourceAreaId"
-        :warehouse-id="form.sourceWarehouseId"
-        :area-id="form.sourceAreaId"
-        :selected-inventory="selectedInventory"
-      />
+      <InventoryDetailSelect ref="inventorySelectRef" :model-value="inventorySelectShow" @handleOkClick="handleOkClick"
+        @handleCancelClick="inventorySelectShow = false" :size="'90%'" :select-warehouse-disable="false"
+        :select-area-disable="!!form?.sourceAreaId" :warehouse-id="form.sourceWarehouseId" :area-id="form.sourceAreaId"
+        :selected-inventory="selectedInventory" />
     </div>
     <div class="footer-global">
       <div class="btn-box">
@@ -193,17 +167,17 @@
 </template>
 
 <script setup name="MovementOrderEdit">
-import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
-import {addMovementOrder, getMovementOrder, updateMovementOrder, movement} from "@/api/wms/movementOrder";
-import {delMovementOrderDetail} from "@/api/wms/movementOrderDetail";
-import {ElMessage, ElMessageBox} from "element-plus";
-import {useRoute} from "vue-router";
-import {useWmsStore} from '@/store/modules/wms'
-import {numSub, generateNo} from '@/utils/ruoyi'
+import { computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch } from "vue";
+import { addMovementOrder, getMovementOrder, updateMovementOrder, movement } from "@/api/wms/movementOrder";
+import { delMovementOrderDetail } from "@/api/wms/movementOrderDetail";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { useRoute } from "vue-router";
+import { useWmsStore } from '@/store/modules/wms'
+import { numSub, generateNo } from '@/utils/ruoyi'
 import InventoryDetailSelect from "@/views/components/InventoryDetailSelect.vue";
 
-const {proxy} = getCurrentInstance();
-const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
+const { proxy } = getCurrentInstance();
+const { wms_shipment_type } = proxy.useDict("wms_shipment_type");
 
 const loading = ref(false)
 const initFormData = {
@@ -217,30 +191,33 @@ const initFormData = {
   targetAreaId: undefined,
   totalQuantity: 0,
   details: [],
+  time: undefined,
+  totalGrossWeight: 0,
+  totalNetWeight: 0
 }
 const inventorySelectRef = ref(null)
 const selectedInventory = ref([])
 const data = reactive({
-  form: {...initFormData},
+  form: { ...initFormData },
   rules: {
     movementOrderNo: [
-      {required: true, message: "出库单号不能为空", trigger: "blur"}
+      { required: true, message: "出库单号不能为空", trigger: "blur" }
     ],
     sourceWarehouseId: [
-      {required: true, message: "请选择源仓库", trigger: ['blur', 'change']}
+      { required: true, message: "请选择源仓库", trigger: ['blur', 'change'] }
     ],
     targetWarehouseId: [
-      {required: true, message: "请选择目标仓库", trigger: ['blur', 'change']}
+      { required: true, message: "请选择目标仓库", trigger: ['blur', 'change'] }
     ],
   }
 });
-const {form, rules} = toRefs(data);
+const { form, rules } = toRefs(data);
 const cancel = async () => {
   await proxy?.$modal.confirm('确认取消编辑移库单吗？');
   close()
 }
 const close = () => {
-  const obj = {path: "/movementOrder"};
+  const obj = { path: "/movementOrder" };
   proxy?.$tab.closeOpenPage(obj);
 }
 const inventorySelectShow = ref(false)
@@ -272,7 +249,9 @@ const handleOkClick = (item) => {
           sourceAreaId: form.value.areaId ?? it.areaId,
           inventoryDetailId: it.id,
           targetAreaId: form.value.targetAreaId,
-          sourceAreaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName
+          sourceAreaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName,
+          grossWeight: it.grossWeight,
+          netWeight: it.netWeight
         })
     }
   })
@@ -317,7 +296,9 @@ const doSave = (movementOrderStatus = 0) => {
           sourceWarehouseId: form.value.warehouseId,
           sourceAreaId: it.sourceAreaId,
           targetWarehouseId: form.value.targetWarehouseId,
-          targetAreaId: it.targetAreaId
+          targetAreaId: it.targetAreaId,
+          grossWeight: it.grossWeight,
+          netWeight: it.netWeight
         }
       })
     }
@@ -328,11 +309,14 @@ const doSave = (movementOrderStatus = 0) => {
       movementOrderStatus,
       remark: form.value.remark,
       totalQuantity: form.value.totalQuantity,
+      totalGrossWeight: form.value.totalGrossWeight,
+      totalNetWeight: form.value.totalNetWeight,
       sourceWarehouseId: form.value.sourceWarehouseId,
       sourceAreaId: form.value.sourceAreaId,
       targetWarehouseId: form.value.targetWarehouseId,
       targetAreaId: form.value.targetAreaId,
-      details: details
+      details: details,
+      time: form.value.time
     }
     if (params.id) {
       updateMovementOrder(params).then((res) => {
@@ -390,7 +374,9 @@ const doMovement = async () => {
         sourceWarehouseId: form.value.sourceWarehouseId,
         sourceAreaId: it.sourceAreaId,
         targetWarehouseId: form.value.targetWarehouseId,
-        targetAreaId: it.targetAreaId
+        targetAreaId: it.targetAreaId,
+        grossWeight: it.grossWeight,
+        netWeight: it.netWeight
       }
     })
 
@@ -400,11 +386,14 @@ const doMovement = async () => {
       movementOrderNo: form.value.movementOrderNo,
       remark: form.value.remark,
       totalQuantity: form.value.totalQuantity,
+      totalGrossWeight: form.value.totalGrossWeight,
+      totalNetWeight: form.value.totalNetWeight,
       sourceWarehouseId: form.value.sourceWarehouseId,
       sourceAreaId: form.value.sourceAreaId,
       targetWarehouseId: form.value.targetWarehouseId,
       targetAreaId: form.value.targetAreaId,
-      details: details
+      details: details,
+      time: form.value.time,
     }
     movement(params).then((res) => {
       if (res.code === 200) {
@@ -445,7 +434,7 @@ const loadDetail = (id) => {
         }
       })
     }
-    form.value = {...response.data}
+    form.value = { ...response.data }
     inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.sourceWarehouseId, form.value.sourceAreaId)
     Promise.resolve();
   }).then(() => {
@@ -477,18 +466,26 @@ const handleChangeTargetWarehouse = (e) => {
 
 const handleChangeTargetArea = (e) => {
   ('targetAreaId', e)
-  ('form.value.targetAreaId', form.value.targetAreaId)
+    ('form.value.targetAreaId', form.value.targetAreaId)
   form.value.details.forEach(it => it.targetAreaId = e)
 }
 
 const handleChangeQuantity = () => {
   let sum = 0
+  let sum2 = 0
+  let sum3 = 0
   form.value.details.forEach(it => {
     if (it.quantity) {
+      it.grossWeight = Number(it.quantity) * (it.itemSku.grossWeight || 0)
+      it.netWeight = Number(it.quantity) * (it.itemSku.netWeight || 0)
       sum += Number(it.quantity)
+      sum2 += Number(it.grossWeight)
+      sum3 += Number(it.netWeight)
     }
   })
   form.value.totalQuantity = sum
+  form.value.totalGrossWeight = sum2
+  form.value.totalNetWeight = sum3
 }
 
 const handleDeleteDetail = (row, index) => {

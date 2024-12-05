@@ -4,53 +4,29 @@
       <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
         <el-form-item label="入库状态" prop="receiptOrderStatus">
           <el-radio-group v-model="queryParams.receiptOrderStatus" @change="handleQuery">
-            <el-radio-button
-              :key="-2"
-              :label="-2"
-            >
+            <el-radio-button :key="-2" :label="-2">
               全部
             </el-radio-button>
-            <el-radio-button
-              v-for="item in wms_receipt_status"
-              :key="item.value"
-              :label="item.value"
-            >
+            <el-radio-button v-for="item in wms_receipt_status" :key="item.value" :label="item.value">
               {{ item.label }}
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="入库类型" prop="receiptOrderStatus">
           <el-radio-group v-model="queryParams.receiptOrderType" @change="handleQuery">
-            <el-radio-button
-              :key="-1"
-              :label="-1"
-            >
+            <el-radio-button :key="-1" :label="-1">
               全部
             </el-radio-button>
-            <el-radio-button
-              v-for="item in wms_receipt_type"
-              :key="item.value"
-              :label="item.value"
-            >
+            <el-radio-button v-for="item in wms_receipt_type" :key="item.value" :label="item.value">
               {{ item.label }}
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="入库单号" prop="receiptOrderNo">
-          <el-input
-            v-model="queryParams.receiptOrderNo"
-            placeholder="请输入入库单号"
-            clearable
-            @keyup.enter="handleQuery"
-          />
+          <el-input v-model="queryParams.receiptOrderNo" placeholder="请输入入库单号" clearable @keyup.enter="handleQuery" />
         </el-form-item>
         <el-form-item label="订单号" prop="orderNo">
-          <el-input
-            v-model="queryParams.orderNo"
-            placeholder="请输入订单号"
-            clearable
-            @keyup.enter="handleQuery"
-          />
+          <el-input v-model="queryParams.orderNo" placeholder="请输入订单号" clearable @keyup.enter="handleQuery" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -64,23 +40,12 @@
       <el-row :gutter="10" class="mb8" type="flex" justify="space-between">
         <el-col :span="6"><span style="font-size: large">入库单</span></el-col>
         <el-col :span="1.5">
-          <el-button
-            type="primary"
-            plain
-            icon="Plus"
-            @click="handleAdd"
-            v-hasPermi="['wms:receipt:all']"
-          >新增</el-button>
+          <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['wms:receipt:all']">新增</el-button>
         </el-col>
       </el-row>
 
-      <el-table v-loading="loading" :data="receiptOrderList" border class="mt20"
-                @expand-change="handleExpandExchange"
-                :row-key="getRowKey"
-                :expand-row-keys="expandedRowKeys"
-                empty-text="暂无入库单"
-                cell-class-name="vertical-top-cell"
-      >
+      <el-table v-loading="loading" :data="receiptOrderList" border class="mt20" @expand-change="handleExpandExchange"
+        :row-key="getRowKey" :expand-row-keys="expandedRowKeys" empty-text="暂无入库单" cell-class-name="vertical-top-cell">
         <el-table-column type="expand">
           <template #default="props">
             <div style="padding: 0 50px 20px 50px">
@@ -96,15 +61,25 @@
                     <div>{{ row?.itemSku?.skuName }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column label="库区" prop="areaName"/>
+                <el-table-column label="库区" prop="areaName" />
                 <el-table-column label="数量" prop="quantity" align="right">
                   <template #default="{ row }">
-                    <el-statistic :value="Number(row.quantity)" :precision="0"/>
+                    <el-statistic :value="Number(row.quantity)" :precision="0" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="毛重(kg)" prop="grossWeight" align="right">
+                  <template #default="{ row }">
+                    <el-statistic :value="Number(row.grossWeight)" :precision="0" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="净重(kg)" prop="netWeight" align="right">
+                  <template #default="{ row }">
+                    <el-statistic :value="Number(row.netWeight)" :precision="0" />
                   </template>
                 </el-table-column>
                 <el-table-column label="价格(元)" align="right">
                   <template #default="{ row }">
-                    <el-statistic :precision="2" :value="row.amount? Number(row.amount):'-'"/>
+                    <el-statistic :precision="2" :value="row.amount ? Number(row.amount) : '-'" />
                   </template>
                 </el-table-column>
                 <el-table-column label="批号" prop="batchNo" />
@@ -149,19 +124,27 @@
             <dict-tag :options="wms_receipt_status" :value="row.receiptOrderStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="数量/金额(元)" align="left">
+        <el-table-column label="数量/金额(元)" align="left" width="150">
           <template #default="{ row }">
             <div class="flex-space-between">
               <span>数量：</span>
-              <el-statistic :value="Number(row.totalQuantity)" :precision="0"/>
+              <el-statistic :value="Number(row.totalQuantity)" :precision="0" />
+            </div>
+            <div class="flex-space-between">
+              <span>毛重(kg)：</span>
+              <el-statistic :value="Number(row.totalGrossWeight)" :precision="0" />
+            </div>
+            <div class="flex-space-between">
+              <span>净重(kg)：</span>
+              <el-statistic :value="Number(row.totalNetWeight)" :precision="0" />
             </div>
             <div class="flex-space-between" v-if="row.payableAmount || row.payableAmount === 0">
               <span>金额：</span>
-              <el-statistic :value="Number(row.payableAmount)" :precision="2"/>
+              <el-statistic :value="Number(row.payableAmount)" :precision="2" />
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="创建/操作" align="left">
+        <el-table-column label="创建/操作" align="left" width="110">
           <template #default="{ row }">
             <div>创建：{{ row.createBy }}</div>
             <div v-if="row.updateBy">操作：{{ row.updateBy }}</div>
@@ -169,6 +152,7 @@
         </el-table-column>
         <el-table-column label="创建时间/操作时间" align="left" width="200">
           <template #default="{ row }">
+            <div>入库：{{ parseTime(row.time, '{mm}-{dd} {hh}:{ii}') }}</div>
             <div>创建：{{ parseTime(row.createTime, '{mm}-{dd} {hh}:{ii}') }}</div>
             <div>操作：{{ parseTime(row.updateTime, '{mm}-{dd} {hh}:{ii}') }}</div>
           </template>
@@ -177,47 +161,36 @@
         <el-table-column label="操作" align="right" class-name="small-padding fixed-width" width="120">
           <template #default="scope">
             <div>
-              <el-popover
-                placement="left"
-                title="提示"
-                :width="300"
-                trigger="hover"
+              <el-popover placement="left" title="提示" :width="300" trigger="hover"
                 :disabled="scope.row.receiptOrderStatus === 0"
-                :content="'入库单【' + scope.row.receiptOrderNo + '】已' + (scope.row.receiptOrderStatus === 1 ? '入库' : '作废') + '，无法修改！' "
-              >
+                :content="'入库单【' + scope.row.receiptOrderNo + '】已' + (scope.row.receiptOrderStatus === 1 ? '入库' : '作废') + '，无法修改！'">
                 <template #reference>
-                  <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['wms:receipt:all']" :disabled="[-1, 1].includes(scope.row.receiptOrderStatus)">修改</el-button>
+                  <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['wms:receipt:all']"
+                    :disabled="[-1, 1].includes(scope.row.receiptOrderStatus)">修改</el-button>
                 </template>
               </el-popover>
-              <el-button link type="primary" @click="handleGoDetail(scope.row)" v-hasPermi="['wms:receipt:all']">{{ expandedRowKeys.includes(scope.row.id) ? '收起' : '查看' }}</el-button>
+              <el-button link type="primary" @click="handleGoDetail(scope.row)" v-hasPermi="['wms:receipt:all']">{{
+                expandedRowKeys.includes(scope.row.id) ? '收起' : '查看' }}</el-button>
             </div>
             <div class="mt10">
-              <el-popover
-                placement="left"
-                title="提示"
-                :width="300"
-                trigger="hover"
+              <el-popover placement="left" title="提示" :width="300" trigger="hover"
                 :disabled="[-1, 0].includes(scope.row.receiptOrderStatus)"
-                :content="'入库单【' + scope.row.receiptOrderNo + '】已入库，无法删除！' "
-              >
+                :content="'入库单【' + scope.row.receiptOrderNo + '】已入库，无法删除！'">
                 <template #reference>
-                  <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:receipt:all']" :disabled="scope.row.receiptOrderStatus === 1">删除</el-button>
+                  <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:receipt:all']"
+                    :disabled="scope.row.receiptOrderStatus === 1">删除</el-button>
                 </template>
               </el-popover>
-              <el-button link type="primary" @click="handlePrint(scope.row)" v-hasPermi="['wms:receipt:all']">打印</el-button>
+              <el-button link type="primary" @click="handlePrint(scope.row)"
+                v-hasPermi="['wms:receipt:all']">打印</el-button>
             </div>
           </template>
         </el-table-column>
       </el-table>
 
       <el-row>
-        <pagination
-          v-show="total>0"
-          :total="total"
-          v-model:page="queryParams.pageNum"
-          v-model:limit="queryParams.pageSize"
-          @pagination="getList"
-        />
+        <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+          v-model:limit="queryParams.pageSize" @pagination="getList" />
       </el-row>
     </el-card>
   </div>
@@ -225,10 +198,10 @@
 
 <script setup name="ReceiptOrder">
 import { listReceiptOrder, getReceiptOrder, delReceiptOrder, addReceiptOrder, updateReceiptOrder } from "@/api/wms/receiptOrder";
-import {getCurrentInstance, reactive, ref, toRefs} from "vue";
-import {useWmsStore} from "../../../../store/modules/wms";
-import {listByReceiptOrderId} from "@/api/wms/receiptOrderDetail";
-import {ElMessageBox} from "element-plus";
+import { getCurrentInstance, reactive, ref, toRefs } from "vue";
+import { useWmsStore } from "../../../../store/modules/wms";
+import { listByReceiptOrderId } from "@/api/wms/receiptOrderDetail";
+import { ElMessageBox } from "element-plus";
 import receiptPanel from "@/components/PrintTemplate/receipt-panel";
 
 const { proxy } = getCurrentInstance();
@@ -262,7 +235,7 @@ const { queryParams } = toRefs(data);
 /** 查询入库单列表 */
 function getList() {
   loading.value = true;
-  const query = {...queryParams.value}
+  const query = { ...queryParams.value }
   if (query.receiptOrderStatus === -2) {
     query.receiptOrderStatus = null
   }
@@ -300,7 +273,7 @@ function handleAdd() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('确认删除入库单【' + row.receiptOrderNo + '】吗？').then(function() {
+  proxy.$modal.confirm('确认删除入库单【' + row.receiptOrderNo + '】吗？').then(function () {
     loading.value = true;
     return delReceiptOrder(_ids);
   }).then(() => {
@@ -323,7 +296,7 @@ function handleDelete(row) {
 }
 
 function handleUpdate(row) {
-  proxy.$router.push({ path: "/receiptOrderEdit",  query: { id: row.id } });
+  proxy.$router.push({ path: "/receiptOrderEdit", query: { id: row.id } });
 }
 
 function handleGoDetail(row) {
@@ -353,6 +326,8 @@ async function handlePrint(row) {
         productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
         expirationDate: proxy.parseTime(detail.expirationDate, '{y}-{m}-{d}'),
         quantity: Number(detail.quantity).toFixed(0),
+        grossWeight: Number(detail.grossWeight).toFixed(2),
+        netWeight: Number(detail.netWeight).toFixed(2),
         amount: detail.amount
       }
     })
@@ -366,15 +341,18 @@ async function handlePrint(row) {
     warehouseName: useWmsStore().warehouseMap.get(receiptOrder.warehouseId)?.warehouseName,
     areaName: useWmsStore().areaMap.get(receiptOrder.areaId)?.areaName,
     totalQuantity: Number(receiptOrder.totalQuantity).toFixed(0),
+    totalGrossWeight: Number(receiptOrder.totalGrossWeight).toFixed(2),
+    totalNetWeight: Number(receiptOrder.totalNetWeight).toFixed(2),
     payableAmount: ((receiptOrder.payableAmount || receiptOrder.payableAmount === 0) ? (receiptOrder.payableAmount + '元') : ''),
     createBy: receiptOrder.createBy,
     createTime: proxy.parseTime(receiptOrder.createTime, '{mm}-{dd} {hh}:{ii}'),
     updateBy: receiptOrder.updateBy,
     updateTime: proxy.parseTime(receiptOrder.updateTime, '{mm}-{dd} {hh}:{ii}'),
     remark: receiptOrder.remark,
-    table
+    table,
+    time: proxy.parseTime(receiptOrder.time, '{mm}-{dd} {hh}:{ii}')
   }
-  let printTemplate = new proxy.$hiprint.PrintTemplate({template: receiptPanel})
+  let printTemplate = new proxy.$hiprint.PrintTemplate({ template: receiptPanel })
   printTemplate.print(printData, {}, {
     styleHandler: () => {
       let css = '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">';
@@ -429,6 +407,7 @@ getList();
 .el-statistic__content {
   font-size: 14px;
 }
+
 .el-table .vertical-top-cell {
   vertical-align: top
 }
