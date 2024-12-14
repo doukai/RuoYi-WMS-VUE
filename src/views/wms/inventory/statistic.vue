@@ -10,17 +10,17 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item class="col4" label="仓库" prop="warehouseId">
-          <el-select style="width: 100%" v-model="queryParams.warehouseId" placeholder="请选择仓库" @change="handleChangeWarehouse"
-                     filterable clearable>
+          <el-select style="width: 100%" v-model="queryParams.warehouseId" placeholder="请选择仓库"
+            @change="handleChangeWarehouse" filterable clearable>
             <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
-                       :value="item.id"/>
+              :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item class="col4" label="库区" prop="areaId">
-          <el-select style="width: 100%" v-model="queryParams.areaId" placeholder="请选择库区" :disabled="!queryParams.warehouseId || queryParams.type == 1" clearable
-                     filterable>
+          <el-select style="width: 100%" v-model="queryParams.areaId" placeholder="请选择库区"
+            :disabled="!queryParams.warehouseId || queryParams.type == 1" clearable filterable>
             <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === queryParams.warehouseId)"
-                       :key="item.id" :label="item.areaName" :value="item.id"/>
+              :key="item.id" :label="item.areaName" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item class="col4" label="商品名称" prop="itemName">
@@ -44,10 +44,10 @@
     <el-card class="mt20">
       <div class="mb8 flex-space-between">
         <div style="font-size: large">库存统计</div>
-        <el-checkbox v-model="filterable" label="过滤掉库存为0的商品" size="large" @change="handleChangeFilterZero"/>
+        <el-checkbox v-model="filterable" label="过滤掉库存为0的商品" size="large" @change="handleChangeFilterZero" />
       </div>
-      <el-table :data="inventoryList" border :span-method="spanMethod"
-                cell-class-name="vertical-top-cell" v-loading="loading" empty-text="暂无库存">
+      <el-table :data="inventoryList" border :span-method="spanMethod" cell-class-name="vertical-top-cell"
+        v-loading="loading" empty-text="暂无库存">
         <template v-if="queryType == 'warehouse' || queryType == 'area'">
           <el-table-column label="仓库" prop="warehouseId">
             <template #default="{ row }">
@@ -88,7 +88,7 @@
             </template>
           </el-table-column>
           <el-table-column label="仓库" prop="skuIdAndWarehouseId">
-            <template #default="{row}">
+            <template #default="{ row }">
               <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
             </template>
           </el-table-column>
@@ -100,14 +100,24 @@
         </template>
         <el-table-column label="库存" prop="quantity" align="right">
           <template #default="{ row }">
-            <el-statistic :value="Number(row.quantity)" :precision="0"/>
+            <el-statistic :value="Number(row.quantity)" :precision="0" />
+          </template>
+        </el-table-column>
+        <el-table-column label="毛重(kg)" prop="grossWeight" align="right">
+          <template #default="{ row }">
+            <el-statistic :value="Number(row.grossWeight)" :precision="0" />
+          </template>
+        </el-table-column>
+        <el-table-column label="净重(kg)" prop="netWeight" align="right">
+          <template #default="{ row }">
+            <el-statistic :value="Number(row.netWeight)" :precision="0" />
           </template>
         </el-table-column>
       </el-table>
 
       <el-row>
-        <pagination v-show="total>0" :total="total" v-model:page="queryParams.pageNum"
-                    v-model:limit="queryParams.pageSize" @pagination="getList"/>
+        <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+          v-model:limit="queryParams.pageSize" @pagination="getList" />
       </el-row>
     </el-card>
   </div>
@@ -117,12 +127,12 @@
 import {
   listInventoryBoard
 } from '@/api/wms/inventory';
-import {computed, getCurrentInstance, onMounted, ref} from 'vue';
-import {ElForm} from 'element-plus';
-import {getRowspanMethod} from "@/utils/getRowSpanMethod";
-import {useWmsStore} from '@/store/modules/wms'
+import { computed, getCurrentInstance, onMounted, ref } from 'vue';
+import { ElForm } from 'element-plus';
+import { getRowspanMethod } from "@/utils/getRowSpanMethod";
+import { useWmsStore } from '@/store/modules/wms'
 
-const {proxy} = getCurrentInstance();
+const { proxy } = getCurrentInstance();
 const spanMethod = computed(() => getRowspanMethod(inventoryList.value, rowSpanArray.value))
 
 const inventoryList = ref([]);
@@ -152,14 +162,14 @@ const queryParams = ref({
 
 /** 查询库存列表 */
 const getList = async () => {
-  const query = {...queryParams.value}
+  const query = { ...queryParams.value }
   if (filterable.value) {
     query.minQuantity = 1
   } else {
     query.minQuantity = undefined
   }
   loading.value = true;
-  const res = await listInventoryBoard(queryParams.value,queryType.value);
+  const res = await listInventoryBoard(queryParams.value, queryType.value);
   inventoryList.value = res.rows;
   inventoryList.value.forEach(it => {
     if (queryType.value == "warehouse") {
@@ -202,7 +212,7 @@ const handleSortTypeChange = (e) => {
   } else if (e === "area") {
     rowSpanArray.value = ['warehouseId', 'areaId', 'areaIdAndItemId']
   } else if (e === "item") {
-    rowSpanArray.value = ['itemId', 'skuId','skuIdAndWarehouseId']
+    rowSpanArray.value = ['itemId', 'skuId', 'skuIdAndWarehouseId']
   }
   queryParams.value.pageNum = 1;
   getList()
@@ -225,6 +235,7 @@ onMounted(() => {
 .el-statistic__content {
   font-size: 14px;
 }
+
 .el-table .vertical-top-cell {
   vertical-align: top
 }

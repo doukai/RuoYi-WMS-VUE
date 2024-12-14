@@ -91,6 +91,14 @@
               <div>数量：</div>
               <el-statistic :value="Number(row.quantity)" :precision="0"/>
             </div>
+            <div class="flex-space-between">
+              <div>毛重(kg)：</div>
+              <el-statistic :value="Number(row.grossWeight)" :precision="0"/>
+            </div>
+            <div class="flex-space-between">
+              <div>净重(kg)：</div>
+              <el-statistic :value="Number(row.netWeight)" :precision="0"/>
+            </div>
             <div class="flex-space-between" v-if="row.amount || row.amount === 0">
               <div>价格：</div>
               <el-statistic :value="Number(row.amount)" :precision="2"/>

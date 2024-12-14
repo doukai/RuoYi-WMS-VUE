@@ -75,14 +75,24 @@
           <div v-if="row.expirationDate">过期日期：{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="入库日期" align="left" prop="createTime" width="140">
+      <el-table-column label="入库日期" align="left" prop="time" width="140">
         <template #default="{ row }">
-          <div>{{ parseTime(row.createTime, '{y}-{m}-{d}') }}</div>
+          <div>{{ parseTime(row.time, '{y}-{m}-{d}') }}</div>
         </template>
       </el-table-column>
       <el-table-column label="剩余库存" prop="remainQuantity" align="right">
         <template #default="{ row }">
           <el-statistic :value="Number(row.remainQuantity)" :precision="0"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="剩余毛重(kg)" prop="remainGrossWeight" align="right">
+        <template #default="{ row }">
+          <el-statistic :value="Number(row.remainGrossWeight)" :precision="0"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="剩余净重(kg)" prop="remainNetWeight" align="right">
+        <template #default="{ row }">
+          <el-statistic :value="Number(row.remainNetWeight)" :precision="0"/>
         </template>
       </el-table-column>
     </el-table>

@@ -121,7 +121,9 @@
             </el-table-column>
             <el-table-column label="剩余库存" prop="remainQuantity" align="right" width="150">
               <template #default="{ row }">
-                <el-statistic :value="Number(row.remainQuantity)" :precision="0" />
+                <div>数量：{{ row.remainQuantity }}</div>
+                <div>毛重(kg)：{{ row.remainGrossWeight }}</div>
+                <div>净重(kg)：{{ row.remainNetWeight }}</div>
               </template>
             </el-table-column>
             <el-table-column label="移库数量" prop="quantity" width="180">
@@ -201,13 +203,16 @@ const data = reactive({
   form: { ...initFormData },
   rules: {
     movementOrderNo: [
-      { required: true, message: "出库单号不能为空", trigger: "blur" }
+      { required: true, message: "移库单号不能为空", trigger: "blur" }
     ],
     sourceWarehouseId: [
       { required: true, message: "请选择源仓库", trigger: ['blur', 'change'] }
     ],
     targetWarehouseId: [
       { required: true, message: "请选择目标仓库", trigger: ['blur', 'change'] }
+    ],
+    time: [
+      { required: true, message: "移库时间不能为空", trigger: ['blur', 'change'] }
     ],
   }
 });
@@ -250,8 +255,11 @@ const handleOkClick = (item) => {
           inventoryDetailId: it.id,
           targetAreaId: form.value.targetAreaId,
           sourceAreaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName,
-          grossWeight: it.grossWeight,
-          netWeight: it.netWeight
+          grossWeight: undefined,
+          netWeight: undefined,
+          remainGrossWeight: it.remainGrossWeight,
+          remainNetWeight: it.remainNetWeight,
+          time: it.time
         })
     }
   })
@@ -298,7 +306,8 @@ const doSave = (movementOrderStatus = 0) => {
           targetWarehouseId: form.value.targetWarehouseId,
           targetAreaId: it.targetAreaId,
           grossWeight: it.grossWeight,
-          netWeight: it.netWeight
+          netWeight: it.netWeight,
+          time: it.time
         }
       })
     }
@@ -376,7 +385,8 @@ const doMovement = async () => {
         targetWarehouseId: form.value.targetWarehouseId,
         targetAreaId: it.targetAreaId,
         grossWeight: it.grossWeight,
-        netWeight: it.netWeight
+        netWeight: it.netWeight,
+        time: it.time
       }
     })
 

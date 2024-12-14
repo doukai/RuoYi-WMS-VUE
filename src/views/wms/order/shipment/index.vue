@@ -84,14 +84,14 @@
                   </template>
                 </el-table-column>
                 <el-table-column label="批号" prop="batchNo" />
-                <el-table-column label="生产日期" prop="productionDate">
+                <el-table-column label="入库时间" prop="time">
                   <template #default="{ row }">
-                    <div>{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
+                    <div>{{ parseTime(row.time, '{mm}-{dd} {hh}:{ii}') }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column label="过期日期" prop="expirationDate">
+                <el-table-column label="入库时长" prop="time">
                   <template #default="{ row }">
-                    <div>{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
+                    <div>{{ timeToDhm(row.time, props.row.time) }}</div>
                   </template>
                 </el-table-column>
               </el-table>
@@ -329,7 +329,9 @@ async function handlePrint(row) {
         batchNo: detail.batchNo,
         productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
         expirationDate: proxy.parseTime(detail.expirationDate, '{y}-{m}-{d}'),
-        amount: detail.amount
+        amount: detail.amount,
+        time: detail.time,
+        dhm: timeToDhm(detail.time, shipmentOrder.time)
       }
     })
   }
@@ -403,6 +405,28 @@ function ifExpand(expandedRows) {
 function getRowKey(row) {
   return row.id
 }
+
+function timeToDhm(startTime, endTime) {
+  if (!startTime || !endTime) {
+    return undefined;
+  }
+  const start = new Date(startTime); // 给定的起始日期
+  const now = new Date(endTime);           // 当前时间
+
+  // 计算时间差（以毫秒为单位）
+  const diffInMillis = now - start;
+
+  // 转换为天、小时、分钟
+  const d = Math.floor(diffInMillis / (1000 * 60 * 60 * 24)); // 总天数
+  const h = Math.floor((diffInMillis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // 剩余小时
+  const m = Math.floor((diffInMillis % (1000 * 60 * 60)) / (1000 * 60));         // 剩余分钟
+
+  let dDisplay = d > 0 ? d + "天" : "";
+  let hDisplay = h > 0 ? h + "小时" : "";
+  let mDisplay = m > 0 ? m + "分钟" : "";
+  return dDisplay + hDisplay + mDisplay;
+}
+
 getList();
 </script>
 <style lang="scss">

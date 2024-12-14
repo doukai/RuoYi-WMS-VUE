@@ -250,6 +250,9 @@ const data = reactive({
     warehouseId: [
       { required: true, message: "请选择仓库", trigger: ['blur', 'change'] }
     ],
+    time: [
+      { required: true, message: "入库时间不能为空", trigger: ['blur', 'change'] }
+    ],
   }
 });
 const { form, rules } = toRefs(data);
@@ -329,7 +332,8 @@ const doSave = async (receiptOrderStatus = 0) => {
         warehouseId: form.value.warehouseId,
         areaId: it.areaId,
         grossWeight: it.grossWeight,
-        netWeight: it.netWeight
+        netWeight: it.netWeight,
+        time: form.value.time
       }
     })
 

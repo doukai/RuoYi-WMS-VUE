@@ -99,7 +99,7 @@
               <template #default="{ row }">
                 <div>{{
                   row.itemSku.item.itemName + (row.itemSku.item.itemCode ? ('(' + row.itemSku.item.itemCode + ')') : '')
-                }}
+                  }}
                 </div>
                 <div v-if="row.itemSku.item.itemBrand">
                   品牌：{{ useWmsStore().itemBrandMap.get(row.itemSku.item.itemBrand).brandName }}
@@ -126,7 +126,9 @@
             </el-table-column>
             <el-table-column label="剩余库存" prop="remainQuantity" align="right" width="150">
               <template #default="{ row }">
-                <el-statistic :value="Number(row.remainQuantity)" :precision="0" />
+                <div>数量：{{ row.remainQuantity }}</div>
+                <div>毛重(kg)：{{ row.remainGrossWeight }}</div>
+                <div>净重(kg)：{{ row.remainNetWeight }}</div>
               </template>
             </el-table-column>
             <el-table-column label="出库数量" prop="quantity" width="180">
@@ -222,6 +224,9 @@ const data = reactive({
     warehouseId: [
       { required: true, message: "请选择仓库", trigger: ['blur', 'change'] }
     ],
+    time: [
+      { required: true, message: "出库时间不能为空", trigger: ['blur', 'change'] }
+    ],
   }
 });
 const { form, rules } = toRefs(data);
@@ -261,10 +266,13 @@ const handleOkClick = (item) => {
           expirationDate: it.expirationDate,
           warehouseId: form.value.warehouseId,
           areaId: form.value.areaId ?? it.areaId,
-          grossWeight: it.grossWeight,
-          netWeight: it.netWeight,
+          grossWeight: undefined,
+          netWeight: undefined,
+          remainGrossWeight: it.remainGrossWeight,
+          remainNetWeight: it.remainNetWeight,
           inventoryDetailId: it.id,
-          areaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName
+          areaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName,
+          time: it.time
         })
     }
   })
@@ -311,7 +319,8 @@ const doSave = (shipmentOrderStatus = 0) => {
           warehouseId: form.value.warehouseId,
           areaId: it.areaId,
           grossWeight: it.grossWeight,
-          netWeight: it.netWeight
+          netWeight: it.netWeight,
+          time: it.time
         }
       })
     }
@@ -392,7 +401,8 @@ const doShipment = async () => {
         warehouseId: form.value.warehouseId,
         areaId: it.areaId,
         grossWeight: it.grossWeight,
-        netWeight: it.netWeight
+        netWeight: it.netWeight,
+        time: it.time
       }
     })
 
