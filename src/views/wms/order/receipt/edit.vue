@@ -414,7 +414,8 @@ const doWarehousing = async () => {
         warehouseId: form.value.warehouseId,
         areaId: it.areaId,
         grossWeight: it.grossWeight,
-        netWeight: it.netWeight
+        netWeight: it.netWeight,
+        time: form.value.time,
       }
     })
 
