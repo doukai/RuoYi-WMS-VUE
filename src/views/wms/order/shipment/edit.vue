@@ -64,7 +64,7 @@
                   show-word-limit="show-word-limit"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <!-- <el-col :span="6">
               <div style="display: flex;align-items: start">
                 <el-form-item label="金额" prop="receivableAmount">
                   <el-input-number v-model="form.receivableAmount" :precision="2" :min="0"></el-input-number>
@@ -72,7 +72,7 @@
                 <el-button link type="primary" @click="handleAutoCalc" class="ml20" style="line-height: 32px">自动计算
                 </el-button>
               </div>
-            </el-col>
+            </el-col> -->
             <el-col :span="6">
               <el-form-item label="数量" prop="totalQuantity">
                 <el-input-number v-model="form.totalQuantity" :controls="false" :precision="0"
@@ -89,7 +89,7 @@
               content="请先选择仓库！">
               <template #reference>
                 <el-button type="primary" plain="plain" size="default" @click="showAddItem" icon="Plus"
-                  :disabled="!form.warehouseId">添加商品
+                  :disabled="!form.time || !form.merchantId || !form.warehouseId">添加商品
                 </el-button>
               </template>
             </el-popover>
@@ -99,7 +99,7 @@
               <template #default="{ row }">
                 <div>{{
                   row.itemSku.item.itemName + (row.itemSku.item.itemCode ? ('(' + row.itemSku.item.itemCode + ')') : '')
-                  }}
+                }}
                 </div>
                 <div v-if="row.itemSku.item.itemBrand">
                   品牌：{{ useWmsStore().itemBrandMap.get(row.itemSku.item.itemBrand).brandName }}
@@ -113,7 +113,7 @@
               </template>
             </el-table-column>
             <el-table-column label="库区" prop="areaName" width="200" />
-            <el-table-column label="批号" prop="batchNo" />
+            <!-- <el-table-column label="批号" prop="batchNo" />
             <el-table-column label="生产日期" prop="productionDate">
               <template #default="{ row }">
                 <div v-if="row.productionDate">{{ row.productionDate.substring(0, 10) }}</div>
@@ -122,6 +122,11 @@
             <el-table-column label="过期日期" prop="expirationDate">
               <template #default="{ row }">
                 <div v-if="row.expirationDate">{{ row.expirationDate.substring(0, 10) }}</div>
+              </template>
+            </el-table-column> -->
+            <el-table-column label="入库时间" prop="time">
+              <template #default="{ row }">
+                <div v-if="row.time">{{ row.time.substring(0, 10) }}</div>
               </template>
             </el-table-column>
             <el-table-column label="剩余库存" prop="remainQuantity" align="right" width="150">
@@ -144,9 +149,11 @@
               </template>
             </el-table-column>
             <el-table-column label="价格" prop="amount" width="180">
-              <template #default="scope">
-                <el-input-number v-model="scope.row.amount" placeholder="价格" :precision="2" :min="0"
-                  :max="2147483647"></el-input-number>
+              <template #default="{ row }">
+                <div>装卸费：{{ row.loadingFee }}</div>
+                <div>操作费：{{ row.operationFee }}</div>
+                <div>仓储费：{{ row.storageFee }}</div>
+                <div>合计：{{ row.totalFee }}</div>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="100" align="right" fixed="right">
@@ -182,6 +189,7 @@
 <script setup name="ShipmentOrderEdit">
 import { computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch } from "vue";
 import { addShipmentOrder, getShipmentOrder, updateShipmentOrder, shipment } from "@/api/wms/shipmentOrder";
+import { getMerchant } from "@/api/wms/merchant";
 import { delShipmentOrderDetail } from "@/api/wms/shipmentOrderDetail";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useRoute } from "vue-router";
@@ -208,7 +216,11 @@ const initFormData = {
   details: [],
   time: undefined,
   totalGrossWeight: 0,
-  totalNetWeight: 0
+  totalNetWeight: 0,
+  loadingFee: 0,
+  operationFee: 0,
+  storageFee: 0,
+  totalFee: 0
 }
 const inventorySelectRef = ref(null)
 const selectedInventory = ref([])
@@ -226,6 +238,9 @@ const data = reactive({
     ],
     time: [
       { required: true, message: "出库时间不能为空", trigger: ['blur', 'change'] }
+    ],
+    merchantId: [
+      { required: true, message: "客户不能为空", trigger: ['blur', 'change'] }
     ],
   }
 });
@@ -248,32 +263,39 @@ const showAddItem = () => {
 // 选择成功
 const handleOkClick = (item) => {
   inventorySelectShow.value = false
-  selectedInventory.value = [...item]
-  item.forEach(it => {
-    if (!form.value.details.find(detail => detail.inventoryDetailId === it.id)) {
-      form.value.details.push(
-        {
-          itemSku: {
-            ...it.itemSku,
-            item: it.item
-          },
-          skuId: it.skuId,
-          amount: undefined,
-          quantity: undefined,
-          remainQuantity: it.remainQuantity,
-          batchNo: it.batchNo,
-          productionDate: it.productionDate,
-          expirationDate: it.expirationDate,
-          warehouseId: form.value.warehouseId,
-          areaId: form.value.areaId ?? it.areaId,
-          grossWeight: undefined,
-          netWeight: undefined,
-          remainGrossWeight: it.remainGrossWeight,
-          remainNetWeight: it.remainNetWeight,
-          inventoryDetailId: it.id,
-          areaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName,
-          time: it.time
-        })
+
+  getMerchant(form.value.merchantId).then((response) => {
+    if (response.data) {
+      selectedInventory.value = [...item]
+      item.forEach(it => {
+        if (!form.value.details.find(detail => detail.inventoryDetailId === it.id)) {
+          form.value.details.push(
+            {
+              itemSku: {
+                ...it.itemSku,
+                item: it.item
+              },
+              skuId: it.skuId,
+              amount: undefined,
+              quantity: undefined,
+              remainQuantity: it.remainQuantity,
+              batchNo: it.batchNo,
+              productionDate: it.productionDate,
+              expirationDate: it.expirationDate,
+              warehouseId: form.value.warehouseId,
+              areaId: form.value.areaId ?? it.areaId,
+              grossWeight: undefined,
+              netWeight: undefined,
+              remainGrossWeight: it.remainGrossWeight,
+              remainNetWeight: it.remainNetWeight,
+              inventoryDetailId: it.id,
+              areaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName,
+              time: it.time,
+              merchant: response.data,
+              receiptOrderNo: it.receiptOrderNo
+            })
+        }
+      })
     }
   })
 }
@@ -320,7 +342,12 @@ const doSave = (shipmentOrderStatus = 0) => {
           areaId: it.areaId,
           grossWeight: it.grossWeight,
           netWeight: it.netWeight,
-          time: it.time
+          time: it.time,
+          loadingFee: it.loadingFee,
+          operationFee: it.operationFee,
+          storageFee: it.storageFee,
+          totalFee: it.totalFee,
+          receiptOrderNo: it.receiptOrderNo
         }
       })
     }
@@ -342,7 +369,11 @@ const doSave = (shipmentOrderStatus = 0) => {
       warehouseId: form.value.warehouseId,
       areaId: form.value.areaId,
       details: details,
-      time: form.value.time
+      time: form.value.time,
+      loadingFee: form.value.loadingFee,
+      operationFee: form.value.operationFee,
+      storageFee: form.value.storageFee,
+      totalFee: form.value.totalFee
     }
     if (params.id) {
       updateShipmentOrder(params).then((res) => {
@@ -402,7 +433,12 @@ const doShipment = async () => {
         areaId: it.areaId,
         grossWeight: it.grossWeight,
         netWeight: it.netWeight,
-        time: it.time
+        time: it.time,
+        loadingFee: it.loadingFee,
+        operationFee: it.operationFee,
+        storageFee: it.storageFee,
+        totalFee: it.totalFee,
+        receiptOrderNo: it.receiptOrderNo
       }
     })
 
@@ -422,6 +458,10 @@ const doShipment = async () => {
       areaId: form.value.areaId,
       details: details,
       time: form.value.time,
+      loadingFee: form.value.loadingFee,
+      operationFee: form.value.operationFee,
+      storageFee: form.value.storageFee,
+      totalFee: form.value.totalFee
     }
     loading.value = true
     shipment(params).then((res) => {
@@ -488,6 +528,10 @@ const handleChangeQuantity = () => {
   let sum = 0
   let sum2 = 0
   let sum3 = 0
+  let sum4 = 0
+  let sum5 = 0
+  let sum6 = 0
+  let sum7 = 0
   form.value.details.forEach(it => {
     if (it.quantity) {
       it.grossWeight = Number(it.quantity) * (it.itemSku.grossWeight || 0)
@@ -495,11 +539,23 @@ const handleChangeQuantity = () => {
       sum += Number(it.quantity)
       sum2 += Number(it.grossWeight)
       sum3 += Number(it.netWeight)
+      it.loadingFee = ((it.merchant.loadingFee || 0) * (it.grossWeight / 1000)).toFixed(2)
+      it.operationFee = ((it.merchant.operationFee || 0) * (it.grossWeight / 1000)).toFixed(2)
+      it.storageFee = ((it.merchant.storageFee || 0) * (it.grossWeight / 1000) * (((new Date(form.value.time) - new Date(it.time)) / (1000 * 60 * 60 * 24)) + 1)).toFixed(2)
+      it.totalFee = Number(it.loadingFee) + Number(it.operationFee) + Number(it.storageFee)
+      sum4 += Number(it.loadingFee)
+      sum5 += Number(it.operationFee)
+      sum6 += Number(it.operationFee)
+      sum7 += Number(it.totalFee)
     }
   })
   form.value.totalQuantity = sum
   form.value.totalGrossWeight = sum2
   form.value.totalNetWeight = sum3
+  form.value.loadingFee = sum4
+  form.value.operationFee = sum5
+  form.value.storageFee = sum6
+  form.value.totalFee = sum7
 }
 
 const handleAutoCalc = () => {

@@ -49,8 +49,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="供应商" prop="merchantId">
-                <el-select v-model="form.merchantId" placeholder="请选择供应商" clearable filterable>
+              <el-form-item label="客户" prop="merchantId">
+                <el-select v-model="form.merchantId" placeholder="请选择客户" clearable filterable>
                   <el-option v-for="item in useWmsStore().merchantList" :key="item.id" :label="item.merchantName"
                     :value="item.id" />
                 </el-select>
@@ -69,7 +69,7 @@
                   show-word-limit="show-word-limit"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <!-- <el-col :span="6">
               <div style="display: flex;align-items: start">
                 <el-form-item label="金额" prop="payableAmount">
                   <el-input-number v-model="form.payableAmount" :precision="2" :min="0"></el-input-number>
@@ -77,7 +77,7 @@
                 <el-button link type="primary" @click="handleAutoCalc" class="ml20"
                   style="line-height: 32px">自动计算</el-button>
               </div>
-            </el-col>
+            </el-col> -->
             <el-col :span="6">
               <el-form-item label="数量" prop="totalQuantity">
                 <el-input-number v-model="form.totalQuantity" :controls="false" :precision="0"
@@ -140,18 +140,18 @@
                 <div>净重(kg)：{{ row.netWeight }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="价格" prop="amount" width="180">
+            <!-- <el-table-column label="价格" prop="amount" width="180">
               <template #default="scope">
                 <el-input-number v-model="scope.row.amount" placeholder="价格" :precision="2" :min="0"
                   :max="2147483647"></el-input-number>
               </template>
-            </el-table-column>
-            <el-table-column label="批号" prop="batchNo" width="150">
+            </el-table-column> -->
+            <!-- <el-table-column label="批号" prop="batchNo" width="150">
               <template #default="scope">
                 <el-input v-model="scope.row.batchNo"></el-input>
               </template>
-            </el-table-column>
-            <el-table-column label="生产日期/过期日期" width="250">
+            </el-table-column> -->
+            <!-- <el-table-column label="生产日期/过期日期" width="250">
               <template #default="scope">
                 <div class="flex-center">
                   <span>生产日期：</span>
@@ -164,7 +164,7 @@
                     value-format="YYYY-MM-DD HH:mm:ss" style="width: 150px!important;" />
                 </div>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column label="操作" width="100" align="right" fixed="right">
               <template #default="scope">
                 <el-button icon="Delete" type="danger" plain size="small"
@@ -252,6 +252,9 @@ const data = reactive({
     ],
     time: [
       { required: true, message: "入库时间不能为空", trigger: ['blur', 'change'] }
+    ],
+    merchantId: [
+      { required: true, message: "客户不能为空", trigger: ['blur', 'change'] }
     ],
   }
 });

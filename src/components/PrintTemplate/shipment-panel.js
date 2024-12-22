@@ -725,10 +725,10 @@ export default {
                 },
                 {
                   "width": 78.57142857142857,
-                  "title": "批号",
-                  "field": "batchNo",
+                  "title": "入库单号",
+                  "field": "receiptOrderNo",
                   "checked": true,
-                  "columnId": "batchNo",
+                  "columnId": "receiptOrderNo",
                   "fixed": false,
                   "rowspan": 1,
                   "colspan": 1,
@@ -798,10 +798,49 @@ export default {
                 {
                   "width": 78.57142857142857,
                   "align": "right",
-                  "title": "价格(元)",
-                  "field": "amount",
+                  "title": "装卸费(元)",
+                  "field": "loadingFee",
                   "checked": true,
-                  "columnId": "amount",
+                  "columnId": "loadingFee",
+                  "fixed": false,
+                  "rowspan": 1,
+                  "colspan": 1,
+                  "tableSummary": "sum",
+                  "tableSummaryAlign": "right"
+                },
+                {
+                  "width": 78.57142857142857,
+                  "align": "right",
+                  "title": "操作费(元)",
+                  "field": "operationFee",
+                  "checked": true,
+                  "columnId": "operationFee",
+                  "fixed": false,
+                  "rowspan": 1,
+                  "colspan": 1,
+                  "tableSummary": "sum",
+                  "tableSummaryAlign": "right"
+                },
+                {
+                  "width": 78.57142857142857,
+                  "align": "right",
+                  "title": "仓储费(元)",
+                  "field": "storageFee",
+                  "checked": true,
+                  "columnId": "storageFee",
+                  "fixed": false,
+                  "rowspan": 1,
+                  "colspan": 1,
+                  "tableSummary": "sum",
+                  "tableSummaryAlign": "right"
+                },
+                {
+                  "width": 78.57142857142857,
+                  "align": "right",
+                  "title": "合计(元)",
+                  "field": "totalFee",
+                  "checked": true,
+                  "columnId": "totalFee",
                   "fixed": false,
                   "rowspan": 1,
                   "colspan": 1,
@@ -892,7 +931,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {

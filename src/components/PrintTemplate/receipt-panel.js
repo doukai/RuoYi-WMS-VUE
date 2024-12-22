@@ -49,7 +49,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -107,7 +107,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -158,7 +158,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -205,7 +205,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -229,7 +229,7 @@ export default {
                 "field": "remark"
               }
             ],
-            "title": "供应商",
+            "title": "客户",
             "field": "merchantName",
             "coordinateSync": false,
             "widthHeightSync": false,
@@ -252,7 +252,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -303,7 +303,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -350,7 +350,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -401,7 +401,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -448,7 +448,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -499,7 +499,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -546,7 +546,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -597,7 +597,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -644,7 +644,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -725,16 +725,6 @@ export default {
                 },
                 {
                   "width": 78.57142857142857,
-                  "title": "批号",
-                  "field": "batchNo",
-                  "checked": true,
-                  "columnId": "batchNo",
-                  "fixed": false,
-                  "rowspan": 1,
-                  "colspan": 1,
-                },
-                {
-                  "width": 78.57142857142857,
                   "title": "入库时间",
                   "field": "time",
                   "checked": true,
@@ -795,19 +785,6 @@ export default {
                   "tableSummaryAlign": "right",
                   "tableSummaryNumFormat": "0"
                 },
-                {
-                  "width": 78.57142857142857,
-                  "align": "right",
-                  "title": "价格(元)",
-                  "field": "amount",
-                  "checked": true,
-                  "columnId": "amount",
-                  "fixed": false,
-                  "rowspan": 1,
-                  "colspan": 1,
-                  "tableSummary": "sum",
-                  "tableSummaryAlign": "right"
-                },
               ]
             ]
           },
@@ -841,7 +818,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {
@@ -892,7 +869,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {

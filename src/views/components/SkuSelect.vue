@@ -45,7 +45,7 @@
                   <div v-if="row.barcode">条码：{{ row.barcode }}</div>
                 </template>
               </el-table-column>
-              <el-table-column label="价格(元)" width="160" align="left">
+              <!-- <el-table-column label="价格(元)" width="160" align="left">
                 <template #default="{ row }">
                   <div v-if="row.costPrice" class="flex-space-between">
                     <span>成本价：</span>
@@ -56,7 +56,7 @@
                     <div>{{ (row.sellingPrice || row.sellingPrice === 0) ? row.sellingPrice : '' }}</div>
                   </div>
                 </template>
-              </el-table-column>
+              </el-table-column> -->
               <el-table-column label="重量(kg)" width="160" align="left">
                 <template #default="{ row }">
                   <div v-if="row.netWeight" class="flex-space-between">

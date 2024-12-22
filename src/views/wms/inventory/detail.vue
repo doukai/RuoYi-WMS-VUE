@@ -35,7 +35,7 @@
         <el-form-item class="col4" label="规格编号" prop="skuCode">
           <el-input class="w200" v-model="queryParams.skuCode" clearable placeholder="规格编号"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label="批号" prop="batchNo">
+        <!-- <el-form-item class="col4" label="批号" prop="batchNo">
           <el-input class="w200" v-model="queryParams.batchNo" clearable placeholder="批号"></el-input>
         </el-form-item>
         <el-form-item class="col4" label="过期" prop="daysToExpires">
@@ -47,7 +47,7 @@
             <el-option label="180天内" :value="180">180天内</el-option>
             <el-option label="365天内" :value="365">365天内</el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item class="col4" label="入库日期" prop="createTimeRange">
           <el-date-picker v-model="queryParams.createTimeRange" type="daterange" range-separator="至"
             value-format="YYYY-MM-DD HH:mm:ss" format="YYYY-MM-DD" :default-time="defaultTime" start-placeholder="开始日期"
@@ -138,7 +138,7 @@
             <el-statistic :value="Number(row.quantity * row.netWeight)" :precision="0" />
           </template>
         </el-table-column>
-        <el-table-column label="批号" align="left" prop="batchNo" />
+        <!-- <el-table-column label="批号" align="left" prop="batchNo" /> -->
         <!-- <el-table-column label="生产日期/过期日期" align="left" width="180">
         <template #default="{ row }">
           <div v-if="row.productionDate">生产日期：{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
@@ -224,14 +224,10 @@ function timeToDhm(startTime) {
   const diffInMillis = now - start;
 
   // 转换为天、小时、分钟
-  const d = Math.floor(diffInMillis / (1000 * 60 * 60 * 24)); // 总天数
-  const h = Math.floor((diffInMillis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // 剩余小时
-  const m = Math.floor((diffInMillis % (1000 * 60 * 60)) / (1000 * 60));         // 剩余分钟
+  const d = Math.floor(diffInMillis / (1000 * 60 * 60 * 24)) + 1; // 总天数
 
   let dDisplay = d > 0 ? d + "天" : "";
-  let hDisplay = h > 0 ? h + "小时" : "";
-  let mDisplay = m > 0 ? m + "分钟" : "";
-  return dDisplay + hDisplay + mDisplay;
+  return dDisplay;
 }
 
 const getList = () => {

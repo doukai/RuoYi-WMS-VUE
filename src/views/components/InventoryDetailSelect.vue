@@ -1,6 +1,6 @@
 <template>
   <el-drawer :model-value="show" title="选择库存" @close="handleCancelClick" :size="size" :close-on-click-modal="false"
-             append-to-body>
+    append-to-body>
     <el-form :inline="true" label-width="108px">
       <el-form-item label="商品名称">
         <el-input v-model="query.itemName" clearable placeholder="商品名称"></el-input>
@@ -9,10 +9,10 @@
         <el-input class="w200" v-model="query.itemCode" clearable placeholder="商品编号"></el-input>
       </el-form-item>
       <el-form-item label="库区">
-        <el-select v-model="query.areaId" placeholder="请选择库区" :disabled="selectAreaDisable"
-                   clearable filterable @change="">
+        <el-select v-model="query.areaId" placeholder="请选择库区" :disabled="selectAreaDisable" clearable filterable
+          @change="">
           <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === query.warehouseId)"
-                     :key="item.id" :label="item.areaName" :value="item.id"/>
+            :key="item.id" :label="item.areaName" :value="item.id" />
         </el-select>
       </el-form-item>
       <el-form-item label="规格名称">
@@ -21,20 +21,13 @@
       <el-form-item label="规格编号">
         <el-input class="w200" v-model="query.barcode" clearable placeholder="规格编号"></el-input>
       </el-form-item>
-      <el-form-item label="批号">
+      <!-- <el-form-item label="批号">
         <el-input class="w200" v-model="query.batchNo" clearable placeholder="批号"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="入库日期" prop="createTimeRange">
-        <el-date-picker
-          v-model="query.createTimeRange"
-          type="daterange"
-          range-separator="至"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          format="YYYY-MM-DD"
-          :default-time="defaultTime"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        />
+        <el-date-picker v-model="query.createTimeRange" type="daterange" range-separator="至"
+          value-format="YYYY-MM-DD HH:mm:ss" format="YYYY-MM-DD" :default-time="defaultTime" start-placeholder="开始日期"
+          end-placeholder="结束日期" />
       </el-form-item>
       <el-form-item label="多少天内过期" prop="daysToExpires">
         <el-select v-model="query.daysToExpires" clearable>
@@ -51,9 +44,9 @@
       </el-form-item>
     </el-form>
     <el-table :data="list" @selection-change="handleSelectionChange" border :row-key="getRowKey" empty-text="暂无库存"
-              v-loading="loading" ref="inventorySelectFormRef" cell-class-name="my-cell" class="mt20">
-      <el-table-column type="selection" width="55" :reserve-selection="true" :selectable="judgeSelectable"/>
-      <el-table-column label="库区" prop="areaName"/>
+      v-loading="loading" ref="inventorySelectFormRef" cell-class-name="my-cell" class="mt20">
+      <el-table-column type="selection" width="55" :reserve-selection="true" :selectable="judgeSelectable" />
+      <el-table-column label="库区" prop="areaName" />
       <el-table-column label="商品信息" prop="itemId">
         <template #default="{ row }">
           <div>{{ row.item.itemName }}</div>
@@ -68,11 +61,16 @@
           <div v-if="row.itemSku.barcode">条码：{{ row.itemSku.barcode }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="批号" align="left" prop="batchNo"/>
+      <!-- <el-table-column label="批号" align="left" prop="batchNo"/>
       <el-table-column label="生产日期/过期日期" align="left" width="180">
         <template #default="{ row }">
           <div v-if="row.productionDate">生产日期：{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
           <div v-if="row.expirationDate">过期日期：{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
+        </template>
+      </el-table-column> -->
+      <el-table-column label="入库单号" align="left" prop="time" width="140">
+        <template #default="{ row }">
+          <div>{{ row.receiptOrderNo }}</div>
         </template>
       </el-table-column>
       <el-table-column label="入库日期" align="left" prop="time" width="140">
@@ -82,29 +80,23 @@
       </el-table-column>
       <el-table-column label="剩余库存" prop="remainQuantity" align="right">
         <template #default="{ row }">
-          <el-statistic :value="Number(row.remainQuantity)" :precision="0"/>
+          <el-statistic :value="Number(row.remainQuantity)" :precision="0" />
         </template>
       </el-table-column>
       <el-table-column label="剩余毛重(kg)" prop="remainGrossWeight" align="right">
         <template #default="{ row }">
-          <el-statistic :value="Number(row.remainGrossWeight)" :precision="0"/>
+          <el-statistic :value="Number(row.remainGrossWeight)" :precision="0" />
         </template>
       </el-table-column>
       <el-table-column label="剩余净重(kg)" prop="remainNetWeight" align="right">
         <template #default="{ row }">
-          <el-statistic :value="Number(row.remainNetWeight)" :precision="0"/>
+          <el-statistic :value="Number(row.remainNetWeight)" :precision="0" />
         </template>
       </el-table-column>
     </el-table>
     <el-row>
-      <pagination
-        v-show="total>0"
-        :total="total"
-        v-model:limit="pageReq.size"
-        v-model:page="pageReq.page"
-        @pagination="getList"
-        class="mr10"
-      />
+      <pagination v-show="total > 0" :total="total" v-model:limit="pageReq.size" v-model:page="pageReq.page"
+        @pagination="getList" class="mr10" />
     </el-row>
 
     <template v-slot:footer>
@@ -114,19 +106,19 @@
         <span>
           <el-button @click="handleCancelClick">取消</el-button>
           <el-button type="primary" @click="handleOkClick">确认</el-button>
-      </span>
+        </span>
       </div>
     </template>
   </el-drawer>
 </template>
 <script setup name="InventoryDetailSelect">
-import {computed, getCurrentInstance, onMounted, reactive, ref} from 'vue';
-import {ElForm} from "element-plus";
-import {useRouter} from "vue-router";
-import {useWmsStore} from '@/store/modules/wms'
-import {listInventoryDetail} from "@/api/wms/inventoryDetail";
-const {proxy} = getCurrentInstance()
-const defaultTime = reactive([new Date(0,0,0,0,0,0), new Date(0,0,0,23,59,59)])
+import { computed, getCurrentInstance, onMounted, reactive, ref } from 'vue';
+import { ElForm } from "element-plus";
+import { useRouter } from "vue-router";
+import { useWmsStore } from '@/store/modules/wms'
+import { listInventoryDetail } from "@/api/wms/inventoryDetail";
+const { proxy } = getCurrentInstance()
+const defaultTime = reactive([new Date(0, 0, 0, 0, 0, 0), new Date(0, 0, 0, 23, 59, 59)])
 
 const router = useRouter()
 const loading = ref(false)
@@ -160,7 +152,7 @@ const getRowKey = (row) => {
   return row.id;
 }
 const getList = () => {
-  const queryCopy = {...query}
+  const queryCopy = { ...query }
   if (queryCopy.createTimeRange) {
     queryCopy.createStartTime = queryCopy.createTimeRange[0]
     queryCopy.createEndTime = queryCopy.createTimeRange[1]
@@ -285,4 +277,3 @@ onMounted(() => {
   font-size: 14px;
 }
 </style>
-

@@ -43,7 +43,7 @@
           <div v-if="row.itemSku.barcode">条码：{{ row.itemSku.barcode }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="价格(元)" width="160" align="left">
+      <!-- <el-table-column label="价格(元)" width="160" align="left">
         <template #default="{ row }">
           <div v-if="row.itemSku.costPrice" class="flex-space-between">
             <span>成本价：</span>
@@ -57,7 +57,7 @@
             </div>
           </div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="重量(kg)" width="160" align="left">
         <template #default="{ row }">
           <div v-if="row.itemSku.netWeight" class="flex-space-between">

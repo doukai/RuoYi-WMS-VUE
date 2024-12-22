@@ -637,10 +637,10 @@ export default {
                 },
                 {
                   "width": 78.57142857142857,
-                  "title": "批号",
-                  "field": "batchNo",
+                  "title": "入库单号",
+                  "field": "receiptOrderNo",
                   "checked": true,
-                  "columnId": "batchNo",
+                  "columnId": "receiptOrderNo",
                   "fixed": false,
                   "rowspan": 1,
                   "colspan": 1,
@@ -791,7 +791,7 @@ export default {
                 "field": "receiptOrderNo"
               },
               {
-                "text": "供应商",
+                "text": "客户",
                 "field": "supplierName"
               },
               {

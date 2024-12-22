@@ -3,29 +3,14 @@
     <el-card>
       <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
         <el-form-item label="编号" prop="merchantCode">
-          <el-input
-            v-model="queryParams.merchantCode"
-            placeholder="请输入编号"
-            clearable
-            @keyup.enter="handleQuery"
-          />
+          <el-input v-model="queryParams.merchantCode" placeholder="请输入编号" clearable @keyup.enter="handleQuery" />
         </el-form-item>
         <el-form-item label="名称" prop="merchantName">
-          <el-input
-            v-model="queryParams.merchantName"
-            placeholder="请输入名称"
-            clearable
-            @keyup.enter="handleQuery"
-          />
+          <el-input v-model="queryParams.merchantName" placeholder="请输入名称" clearable @keyup.enter="handleQuery" />
         </el-form-item>
         <el-form-item label="企业类型" prop="merchantType">
           <el-select v-model="queryParams.merchantType" placeholder="请选择企业类型" clearable>
-            <el-option
-              v-for="dict in merchant_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            />
+            <el-option v-for="dict in merchant_type" :key="dict.value" :label="dict.label" :value="dict.value" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -38,46 +23,41 @@
     <el-card class="mt20">
 
       <el-row :gutter="10" class="mb8" type="flex" justify="space-between">
-        <el-col :span="6"><span style="font-size: large">往来单位</span></el-col>
+        <el-col :span="6"><span style="font-size: large">客户</span></el-col>
         <el-col :span="1.5">
-          <el-button
-            type="primary"
-            plain
-            icon="Plus"
-            @click="handleAdd"
-            v-hasPermi="['wms:merchant:add']"
-          >新增</el-button>
+          <el-button type="primary" plain icon="Plus" @click="handleAdd"
+            v-hasPermi="['wms:merchant:add']">新增</el-button>
         </el-col>
       </el-row>
 
-      <el-table v-loading="loading" :data="merchantList" border class="mt20" empty-text="暂无往来单位">
-        <el-table-column label="id" prop="id" v-if="false"/>
+      <el-table v-loading="loading" :data="merchantList" border class="mt20" empty-text="暂无客户">
+        <el-table-column label="id" prop="id" v-if="false" />
         <el-table-column label="编号" prop="merchantCode" />
         <el-table-column label="名称" prop="merchantName" />
         <el-table-column label="企业类型" prop="merchantType">
           <template #default="scope">
-            <dict-tag :options="merchant_type" :value="scope.row.merchantType"/>
+            <dict-tag :options="merchant_type" :value="scope.row.merchantType" />
           </template>
         </el-table-column>
-        <el-table-column label="级别" prop="merchantLevel" />
+        <!-- <el-table-column label="级别" prop="merchantLevel" /> -->
+        <el-table-column label="装卸费(元/吨)" prop="loadingFee" />
+        <el-table-column label="操作费(元/吨)" prop="operationFee" />
+        <el-table-column label="仓储费(元/吨/天)" prop="storageFee" />
         <el-table-column label="联系人" prop="contactPerson" />
         <el-table-column label="备注" prop="remark" />
         <el-table-column label="操作" align="right" class-name="small-padding fixed-width">
-            <template #default="scope">
-                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:merchant:edit']">修改</el-button>
-                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['wms:merchant:remove']">删除</el-button>
-            </template>
+          <template #default="scope">
+            <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+              v-hasPermi="['wms:merchant:edit']">修改</el-button>
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+              v-hasPermi="['wms:merchant:remove']">删除</el-button>
+          </template>
         </el-table-column>
       </el-table>
 
       <el-row>
-        <pagination
-          v-show="total>0"
-          :total="total"
-          v-model:page="queryParams.pageNum"
-          v-model:limit="queryParams.pageSize"
-          @pagination="getList"
-        />
+        <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+          v-model:limit="queryParams.pageSize" @pagination="getList" />
       </el-row>
 
     </el-card>
@@ -90,14 +70,19 @@
         <el-form-item label="名称" prop="merchantName">
           <el-input v-model="form.merchantName" placeholder="请输入名称" />
         </el-form-item>
+        <el-form-item label="装卸费(元/吨)" prop="loadingFee">
+          <el-input-number v-model="form.loadingFee" placeholder="请输入装卸费" :min="0" :precision="2"></el-input-number>
+        </el-form-item>
+        <el-form-item label="操作费(元/吨)" prop="operationFee">
+          <el-input-number v-model="form.operationFee" placeholder="请输入操作费" :min="0" :precision="2"></el-input-number>
+        </el-form-item>
+        <el-form-item label="仓储费(元/吨/天)" prop="storageFee">
+          <el-input-number v-model="form.storageFee" placeholder="请输入仓储费" :min="0" :precision="2"></el-input-number>
+        </el-form-item>
         <el-form-item label="企业类型" prop="merchantType">
           <el-select v-model="form.merchantType" placeholder="请选择企业类型">
-            <el-option
-              v-for="dict in merchant_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
+            <el-option v-for="dict in merchant_type" :key="dict.value" :label="dict.label"
+              :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="级别" prop="merchantLevel">
@@ -140,7 +125,7 @@
 
 <script setup name="Merchant">
 import { listMerchant, getMerchant, delMerchant, addMerchant, updateMerchant } from "@/api/wms/merchant";
-import {ElMessageBox} from "element-plus";
+import { ElMessageBox } from "element-plus";
 
 const { proxy } = getCurrentInstance();
 const { merchant_type } = proxy.useDict('merchant_type');
@@ -234,7 +219,7 @@ function resetQuery() {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加往来单位";
+  title.value = "添加客户";
 }
 
 /** 修改按钮操作 */
@@ -244,7 +229,7 @@ function handleUpdate(row) {
   getMerchant(_id).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改往来单位";
+    title.value = "修改客户";
   });
 }
 
@@ -277,7 +262,7 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('确认删除往来单位【' + row.merchantName + '】吗？').then(function() {
+  proxy.$modal.confirm('确认删除往来单位【' + row.merchantName + '】吗？').then(function () {
     return delMerchant(_ids);
   }).then((res) => {
     loading.value = true;
@@ -286,7 +271,7 @@ function handleDelete(row) {
   }).catch((e) => {
     if (e === 409) {
       return ElMessageBox.alert(
-        '<div>往来单位【' + row.merchantName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
+        '<div>客户' + row.merchantName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
         '系统提示',
         {
           dangerouslyUseHTMLString: true,

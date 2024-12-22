@@ -108,7 +108,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="批号" prop="batchNo" />
+            <!-- <el-table-column label="批号" prop="batchNo" />
             <el-table-column label="生产日期" prop="productionDate">
               <template #default="{ row }">
                 <div v-if="row.productionDate">{{ row.productionDate.substring(0, 10) }}</div>
@@ -117,6 +117,11 @@
             <el-table-column label="过期日期" prop="expirationDate">
               <template #default="{ row }">
                 <div v-if="row.expirationDate">{{ row.expirationDate.substring(0, 10) }}</div>
+              </template>
+            </el-table-column> -->
+            <el-table-column label="入库时间" prop="time">
+              <template #default="{ row }">
+                <div v-if="row.expirationDate">{{ row.time.substring(0, 10) }}</div>
               </template>
             </el-table-column>
             <el-table-column label="剩余库存" prop="remainQuantity" align="right" width="150">
@@ -259,7 +264,8 @@ const handleOkClick = (item) => {
           netWeight: undefined,
           remainGrossWeight: it.remainGrossWeight,
           remainNetWeight: it.remainNetWeight,
-          time: it.time
+          time: it.time,
+          receiptOrderNo: it.receiptOrderNo
         })
     }
   })
@@ -307,7 +313,8 @@ const doSave = (movementOrderStatus = 0) => {
           targetAreaId: it.targetAreaId,
           grossWeight: it.grossWeight,
           netWeight: it.netWeight,
-          time: it.time
+          time: it.time,
+          receiptOrderNo: it.receiptOrderNo
         }
       })
     }
@@ -386,7 +393,8 @@ const doMovement = async () => {
         targetAreaId: it.targetAreaId,
         grossWeight: it.grossWeight,
         netWeight: it.netWeight,
-        time: it.time
+        time: it.time,
+        receiptOrderNo: it.receiptOrderNo
       }
     })
 

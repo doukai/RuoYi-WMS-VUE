@@ -105,13 +105,13 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="批号" prop="batchNo"/>
+        <!-- <el-table-column label="批号" prop="batchNo"/>
         <el-table-column label="生产日期/过期日期">
           <template #default="{ row }">
             <div v-if="row.productionDate">生产日期：{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
             <div v-if="row.expirationDate">过期日期：{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="操作时间" prop="createTime"/>
       </el-table>
 

@@ -77,12 +77,12 @@
                     <el-statistic :value="Number(row.netWeight)" :precision="0" />
                   </template>
                 </el-table-column>
-                <el-table-column label="价格(元)" align="right">
+                <!-- <el-table-column label="价格(元)" align="right">
                   <template #default="{ row }">
                     <el-statistic :precision="2" :value="row.amount ? Number(row.amount) : '-'" />
                   </template>
-                </el-table-column>
-                <el-table-column label="批号" prop="batchNo" />
+                </el-table-column> -->
+                <!-- <el-table-column label="批号" prop="batchNo" /> -->
                 <el-table-column label="入库时间" prop="time">
                   <template #default="{ row }">
                     <div>{{ parseTime(row.time, '{mm}-{dd} {hh}:{ii}') }}</div>
@@ -108,7 +108,7 @@
             <dict-tag :options="wms_receipt_type" :value="row.receiptOrderType" />
           </template>
         </el-table-column>
-        <el-table-column label="供应商" align="left" prop="merchantId">
+        <el-table-column label="客户" align="left" prop="merchantId">
           <template #default="{ row }">
             <div>{{ useWmsStore().merchantMap.get(row.merchantId)?.merchantName }}</div>
           </template>
@@ -124,7 +124,7 @@
             <dict-tag :options="wms_receipt_status" :value="row.receiptOrderStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="数量/金额(元)" align="left" width="150">
+        <el-table-column label="数量" align="left" width="150">
           <template #default="{ row }">
             <div class="flex-space-between">
               <span>数量：</span>
@@ -138,10 +138,10 @@
               <span>净重(kg)：</span>
               <el-statistic :value="Number(row.totalNetWeight)" :precision="0" />
             </div>
-            <div class="flex-space-between" v-if="row.payableAmount || row.payableAmount === 0">
+            <!-- <div class="flex-space-between" v-if="row.payableAmount || row.payableAmount === 0">
               <span>金额：</span>
               <el-statistic :value="Number(row.payableAmount)" :precision="2" />
-            </div>
+            </div> -->
           </template>
         </el-table-column>
         <el-table-column label="创建/操作" align="left" width="110">
@@ -415,14 +415,10 @@ function timeToDhm(startTime) {
   const diffInMillis = now - start;
 
   // 转换为天、小时、分钟
-  const d = Math.floor(diffInMillis / (1000 * 60 * 60 * 24)); // 总天数
-  const h = Math.floor((diffInMillis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // 剩余小时
-  const m = Math.floor((diffInMillis % (1000 * 60 * 60)) / (1000 * 60));         // 剩余分钟
+  const d = Math.floor(diffInMillis / (1000 * 60 * 60 * 24)) + 1; // 总天数
 
   let dDisplay = d > 0 ? d + "天" : "";
-  let hDisplay = h > 0 ? h + "小时" : "";
-  let mDisplay = m > 0 ? m + "分钟" : "";
-  return dDisplay + hDisplay + mDisplay;
+  return dDisplay;
 }
 
 getList();
