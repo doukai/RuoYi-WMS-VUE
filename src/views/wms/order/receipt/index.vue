@@ -28,6 +28,11 @@
         <el-form-item label="订单号" prop="orderNo">
           <el-input v-model="queryParams.orderNo" placeholder="请输入订单号" clearable @keyup.enter="handleQuery" />
         </el-form-item>
+        <el-form-item label="入库日期" prop="createTimeRange">
+          <el-date-picker v-model="queryParams.createTimeRange" type="daterange" range-separator="至"
+            value-format="YYYY-MM-DD HH:mm:ss" format="YYYY-MM-DD" :default-time="defaultTime" start-placeholder="开始日期"
+            end-placeholder="结束日期" />
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
           <el-button icon="Refresh" @click="resetQuery">重置</el-button>

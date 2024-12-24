@@ -336,7 +336,8 @@ const doSave = async (receiptOrderStatus = 0) => {
         areaId: it.areaId,
         grossWeight: it.grossWeight,
         netWeight: it.netWeight,
-        time: form.value.time
+        time: form.value.time,
+        receiptOrderNo: form.value.receiptOrderNo
       }
     })
 
@@ -419,6 +420,7 @@ const doWarehousing = async () => {
         grossWeight: it.grossWeight,
         netWeight: it.netWeight,
         time: form.value.time,
+        receiptOrderNo: form.value.receiptOrderNo
       }
     })
 
