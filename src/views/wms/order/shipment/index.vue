@@ -36,6 +36,7 @@
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
           <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+          <el-button type="warning" plain icon="Download" @click="handleExport">导出</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -225,7 +226,7 @@
 
 <script setup name="ShipmentOrder">
 import { listShipmentOrder, delShipmentOrder, getShipmentOrder } from "@/api/wms/shipmentOrder";
-import { listByShipmentOrderId } from "@/api/wms/shipmentOrderDetail";
+import { listByShipmentOrderId, listShipmentOrderDetail } from "@/api/wms/shipmentOrderDetail";
 import { getCurrentInstance, reactive, ref, toRefs } from "vue";
 import { useWmsStore } from "../../../../store/modules/wms";
 import { ElMessageBox } from "element-plus";
@@ -263,6 +264,10 @@ const { queryParams } = toRefs(data);
 function getList() {
   loading.value = true;
   const query = { ...queryParams.value }
+  if (query.createTimeRange) {
+    query.createStartTime = query.createTimeRange[0]
+    query.createEndTime = query.createTimeRange[1]
+  }
   if (query.shipmentOrderStatus === -2) {
     query.shipmentOrderStatus = null
   }
@@ -284,6 +289,13 @@ function getList() {
 function handleQuery() {
   queryParams.value.pageNum = 1;
   getList();
+}
+
+/** 导出按钮操作 */
+function handleExport() {
+  proxy.download("wms/shipmentOrderDetail/export", {
+    ...queryParams.value,
+  }, `出库单.xlsx`);
 }
 
 /** 重置按钮操作 */

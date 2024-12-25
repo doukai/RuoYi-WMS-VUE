@@ -36,6 +36,7 @@
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
           <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+          <el-button type="warning" plain icon="Download" @click="handleExport">导出</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -241,6 +242,10 @@ const { queryParams } = toRefs(data);
 function getList() {
   loading.value = true;
   const query = { ...queryParams.value }
+  if (query.createTimeRange) {
+    query.createStartTime = query.createTimeRange[0]
+    query.createEndTime = query.createTimeRange[1]
+  }
   if (query.receiptOrderStatus === -2) {
     query.receiptOrderStatus = null
   }
@@ -262,6 +267,13 @@ function getList() {
 function handleQuery() {
   queryParams.value.pageNum = 1;
   getList();
+}
+
+/** 导出按钮操作 */
+function handleExport() {
+  proxy.download("wms/receiptOrderDetail/export", {
+    ...queryParams.value,
+  }, `入库单.xlsx`);
 }
 
 /** 重置按钮操作 */

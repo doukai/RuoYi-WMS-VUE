@@ -99,7 +99,7 @@
               <template #default="{ row }">
                 <div>{{
                   row.itemSku.item.itemName + (row.itemSku.item.itemCode ? ('(' + row.itemSku.item.itemCode + ')') : '')
-                }}
+                  }}
                 </div>
                 <div v-if="row.itemSku.item.itemBrand">
                   品牌：{{ useWmsStore().itemBrandMap.get(row.itemSku.item.itemBrand).brandName }}
@@ -347,7 +347,8 @@ const doSave = (shipmentOrderStatus = 0) => {
           operationFee: it.operationFee,
           storageFee: it.storageFee,
           totalFee: it.totalFee,
-          receiptOrderNo: it.receiptOrderNo
+          receiptOrderNo: it.receiptOrderNo,
+          shipmentOrderNo: form.value.shipmentOrderNo
         }
       })
     }
@@ -438,7 +439,8 @@ const doShipment = async () => {
         operationFee: it.operationFee,
         storageFee: it.storageFee,
         totalFee: it.totalFee,
-        receiptOrderNo: it.receiptOrderNo
+        receiptOrderNo: it.receiptOrderNo,
+        shipmentOrderNo: form.value.shipmentOrderNo
       }
     })
 
